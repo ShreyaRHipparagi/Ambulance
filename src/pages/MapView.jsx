@@ -137,7 +137,8 @@ export default function MapView() {
               
               if (edge && ROUTE_COORDS[edge.id]) {
                 let segmentCoords = ROUTE_COORDS[edge.id];
-                if (segmentCoords[0][0] !== locations.find(l => l.id === from).lng) {
+                const fromNode = locations.find(l => l.id === from);
+                if (fromNode && Math.abs(segmentCoords[0][0] - fromNode.lng) > 0.001) {
                   segmentCoords = [...segmentCoords].reverse();
                 }
                 if (i > 0) segmentCoords.shift();
@@ -213,7 +214,8 @@ export default function MapView() {
         
         if (edge && ROUTE_COORDS[edge.id]) {
           let segmentCoords = ROUTE_COORDS[edge.id];
-          if (segmentCoords[0][0] !== locations.find(l => l.id === from).lng) {
+          const fromNode = locations.find(l => l.id === from);
+          if (fromNode && Math.abs(segmentCoords[0][0] - fromNode.lng) > 0.001) {
             segmentCoords = [...segmentCoords].reverse();
           }
           if (i > 0) segmentCoords.shift();
@@ -330,16 +332,48 @@ export default function MapView() {
                       const weight = edge ? edge.weight : 0;
                       const roadName = edge ? edge.roadName : 'Direct Connecting Road';
                       
+                      // Traffic & Speed Calculations (Speed decreases as congestion multiplier increases)
+                      const multiplier = (edge && edge.trafficMultiplier) ? edge.trafficMultiplier : 1.0;
+                      let speed = 60; // baseline speed in km/h
+                      let trafficStatus = 'Clear';
+                      let trafficColor = 'var(--accent-green)';
+                      
+                      if (multiplier > 1.7) {
+                        speed = 30;
+                        trafficStatus = 'Heavy Traffic';
+                        trafficColor = 'var(--accent-red)';
+                      } else if (multiplier > 1.3) {
+                        speed = 40;
+                        trafficStatus = 'Moderate Traffic';
+                        trafficColor = 'var(--accent-amber)';
+                      } else if (multiplier > 1.0) {
+                        speed = 50;
+                        trafficStatus = 'Light Traffic';
+                        trafficColor = 'var(--accent-cyan)';
+                      }
+                      
+                      const duration = Math.max(1, Math.round((weight / speed) * 60));
+                      
                       legs.push(
                         <div key={i} className="p-sm rounded-lg" style={{ background: 'var(--bg-primary)', border: '1px solid var(--border-subtle)', fontSize: '11px' }}>
                           <div className="flex justify-between font-bold text-sm mb-xs">
                             <span style={{ color: 'var(--text-primary)' }}>Node {fromId} ➔ Node {toId}</span>
                             <span style={{ color: 'var(--accent-cyan)' }}>{weight.toFixed(1)} km</span>
                           </div>
-                          <div className="text-xs font-semibold text-accent-purple mb-2">
-                            {fromNode.name.split(' ')[0]} to {toNode.name.split(' ')[0]}
+                          
+                          <div className="text-xs font-semibold mb-sm" style={{ color: 'var(--accent-purple)' }}>
+                            {fromNode ? fromNode.name : `Node ${fromId}`} to {toNode ? toNode.name : `Node ${toId}`}
                           </div>
-                          <div className="text-xs text-muted font-mono" style={{ fontSize: '10px' }}>{roadName}</div>
+                          
+                          <div className="flex flex-wrap justify-between items-center gap-xs mt-xs pt-xs" style={{ borderTop: '1px dashed var(--border-subtle)' }}>
+                            <span className="font-mono text-muted" style={{ fontSize: '10px' }}>{roadName}</span>
+                            <span className="font-bold font-mono" style={{ color: trafficColor }}>{duration} mins</span>
+                          </div>
+                          
+                          <div className="flex justify-between items-center mt-xs text-muted" style={{ fontSize: '10px' }}>
+                            <span>Avg Speed: <strong style={{ color: 'var(--text-primary)' }}>{speed} km/h</strong></span>
+                            <span style={{ color: trafficColor, fontWeight: '700' }}>● {trafficStatus}</span>
+                          </div>
                         </div>
                       );
                     }

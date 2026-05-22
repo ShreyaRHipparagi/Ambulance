@@ -40,7 +40,6 @@ export const EDGES = [
   { id: 'e9',  from: 7, to: 4, weight: 1.8, roadName: 'Padmanabhanagar-Jayanagar Rd',    trafficMultiplier: 1.2 },
   { id: 'e10', from: 7, to: 2, weight: 4.2, roadName: 'JP Nagar Link Road',              trafficMultiplier: 1.5 },
   { id: 'e11', from: 4, to: 6, weight: 3.5, roadName: 'Jayanagar-Banashankari Rd',       trafficMultiplier: 1.8 },
-  { id: 'e12', from: 6, to: 8, weight: 11.2, roadName: 'Mysore Road Connector',           trafficMultiplier: 1.0 },
   { id: 'e13', from: 8, to: 9, weight: 4.8, roadName: 'Kengeri-RR Nagar Highway',        trafficMultiplier: 1.0 },
   { id: 'e14', from: 5, to: 9, weight: 2.9, roadName: 'Uttarahalli-Kengeri Ring Rd',      trafficMultiplier: 1.2 },
 ];
@@ -61,7 +60,6 @@ export const ROUTE_COORDS = {
   'e9':  [[77.5480, 12.9180], [77.5580, 12.9120], [77.5660, 12.9085]],
   'e10': [[77.5480, 12.9180], [77.5650, 12.9100], [77.5850, 12.9060]],
   'e11': [[77.5660, 12.9085], [77.5500, 12.9200], [77.5320, 12.9280]],
-  'e12': [[77.5320, 12.9280], [77.5000, 12.9200], [77.4700, 12.9100], [77.4420, 12.8933]],
   'e13': [[77.4420, 12.8933], [77.4600, 12.9050], [77.4780, 12.9135]],
   'e14': [[77.4680, 12.8980], [77.4720, 12.9050], [77.4780, 12.9135]],
 };
