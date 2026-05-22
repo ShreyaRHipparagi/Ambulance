@@ -171,6 +171,9 @@ export default function MapView() {
 
       // Add markers
       locations.forEach(loc => {
+        const container = document.createElement('div');
+        container.className = 'marker-container';
+
         const el = document.createElement('div');
         if (loc.isHospital) {
           el.className = 'hospital-marker';
@@ -184,7 +187,9 @@ export default function MapView() {
           el.className += ' source-marker';
         }
 
-        new mapboxgl.Marker(el)
+        container.appendChild(el);
+
+        new mapboxgl.Marker({ element: container, anchor: 'center' })
           .setLngLat([loc.lng, loc.lat])
           .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(`<h4>${loc.name}</h4><p>${loc.area}</p>`))
           .addTo(map);

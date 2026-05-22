@@ -22,6 +22,10 @@ export const LOCATIONS = [
   { id: 7, name: 'Padmanabhanagar Circle',  area: 'Padmanabhanagar',   lat: 12.9180, lng: 77.5480, isHospital: false },
   { id: 8, name: 'RRMCH Mysore Road',       area: 'Mysore Road',       lat: 12.8933, lng: 77.4420, isHospital: true,  hospitalId: 'H1' },
   { id: 9, name: 'Kengeri Bus Terminal',    area: 'Kengeri',           lat: 12.9135, lng: 77.4780, isHospital: false },
+  { id: 10, name: 'Banashankari Temple (BSK)', area: 'Banashankari',   lat: 12.9150, lng: 77.5730, isHospital: false },
+  { id: 11, name: 'Apollo Hospital Bannerghatta', area: 'JP Nagar',    lat: 12.8980, lng: 77.5950, isHospital: true,  hospitalId: 'H5' },
+  { id: 12, name: 'JP Nagar Metro Station', area: 'JP Nagar',          lat: 12.9070, lng: 77.5750, isHospital: false },
+  { id: 13, name: 'Fortis Hospital Bannerghatta Road', area: 'JP Nagar',lat: 12.8950, lng: 77.5980, isHospital: true,  hospitalId: 'H6' },
 ];
 
 // ============================================================
@@ -42,6 +46,16 @@ export const EDGES = [
   { id: 'e11', from: 4, to: 6, weight: 3.5, roadName: 'Jayanagar-Banashankari Rd',       trafficMultiplier: 1.8 },
   { id: 'e13', from: 8, to: 9, weight: 4.8, roadName: 'Kengeri-RR Nagar Highway',        trafficMultiplier: 1.0 },
   { id: 'e14', from: 5, to: 9, weight: 2.9, roadName: 'Uttarahalli-Kengeri Ring Rd',      trafficMultiplier: 1.2 },
+  { id: 'e15', from: 10, to: 6, weight: 2.2, roadName: 'Outer Ring Road (BSK)',          trafficMultiplier: 1.5 },
+  { id: 'e16', from: 10, to: 2, weight: 2.5, roadName: 'Kanakapura-JP Nagar Rd',          trafficMultiplier: 1.2 },
+  { id: 'e17', from: 10, to: 7, weight: 3.0, roadName: 'BSK 2nd Stage Ring Rd',          trafficMultiplier: 1.3 },
+  { id: 'e18', from: 11, to: 2, weight: 2.0, roadName: 'Bannerghatta Main Road',          trafficMultiplier: 1.8 },
+  { id: 'e19', from: 11, to: 3, weight: 4.5, roadName: 'Arekere-KS Layout Link',          trafficMultiplier: 1.4 },
+  { id: 'e20', from: 12, to: 2, weight: 1.2, roadName: 'Kanakapura-JP Nagar Link',       trafficMultiplier: 1.4 },
+  { id: 'e21', from: 12, to: 10, weight: 1.8, roadName: 'Sarakki Signal Road', trafficMultiplier: 1.6 },
+  { id: 'e22', from: 12, to: 4, weight: 1.5, roadName: 'DSI Road Link', trafficMultiplier: 1.3 },
+  { id: 'e23', from: 13, to: 11, weight: 0.8, roadName: 'Bannerghatta Main Road', trafficMultiplier: 1.8 },
+  { id: 'e24', from: 13, to: 2, weight: 2.2, roadName: 'JP Nagar 15th Cross Rd', trafficMultiplier: 1.2 },
 ];
 
 // ============================================================
@@ -62,6 +76,16 @@ export const ROUTE_COORDS = {
   'e11': [[77.5660, 12.9085], [77.5500, 12.9200], [77.5320, 12.9280]],
   'e13': [[77.4420, 12.8933], [77.4600, 12.9050], [77.4780, 12.9135]],
   'e14': [[77.4680, 12.8980], [77.4720, 12.9050], [77.4780, 12.9135]],
+  'e15': [[77.5730, 12.9150], [77.5550, 12.9220], [77.5320, 12.9280]],
+  'e16': [[77.5730, 12.9150], [77.5800, 12.9100], [77.5850, 12.9060]],
+  'e17': [[77.5730, 12.9150], [77.5600, 12.9180], [77.5480, 12.9180]],
+  'e18': [[77.5950, 12.8980], [77.5900, 12.9020], [77.5850, 12.9060]],
+  'e19': [[77.5950, 12.8980], [77.5750, 12.8950], [77.5550, 12.8950]],
+  'e20': [[77.5750, 12.9070], [77.5800, 12.9065], [77.5850, 12.9060]],
+  'e21': [[77.5750, 12.9070], [77.5740, 12.9110], [77.5730, 12.9150]],
+  'e22': [[77.5750, 12.9070], [77.5700, 12.9080], [77.5660, 12.9085]],
+  'e23': [[77.5980, 12.8950], [77.5965, 12.8965], [77.5950, 12.8980]],
+  'e24': [[77.5980, 12.8950], [77.5900, 12.9000], [77.5850, 12.9060]],
 };
 
 // ============================================================
@@ -124,6 +148,34 @@ export const HOSPITALS = [
     generalBedsAvailable: 6,
     color: '#8b5cf6',
   },
+  {
+    id: 'H5',
+    name: 'Apollo Hospital Bannerghatta Road',
+    shortName: 'Apollo Bannerghatta',
+    nodeId: 11,
+    contact: '080-2630-4050',
+    address: '154/11, Bannerghatta Road, JP Nagar, Bangalore - 560076',
+    specializations: ['CARDIAC', 'NEURO', 'BURNS'],
+    icuBedsTotal: 12,
+    icuBedsAvailable: 5,
+    generalBedsTotal: 25,
+    generalBedsAvailable: 11,
+    color: '#3b82f6',
+  },
+  {
+    id: 'H6',
+    name: 'Fortis Hospital Bannerghatta Road',
+    shortName: 'Fortis Bannerghatta',
+    nodeId: 13,
+    contact: '080-6621-4444',
+    address: '154/9, Bannerghatta Road, JP Nagar, Bangalore - 560076',
+    specializations: ['CARDIAC', 'TRAUMA', 'NEURO'],
+    icuBedsTotal: 10,
+    icuBedsAvailable: 4,
+    generalBedsTotal: 22,
+    generalBedsAvailable: 9,
+    color: '#06b6d4',
+  },
 ];
 
 // ============================================================
@@ -174,6 +226,10 @@ export const NODE_POSITIONS = {
   7: { x: 580, y: 320 },  // Padmanabhanagar Circle (center-right)
   8: { x: 140, y: 150 },  // RRMCH Mysore Road (far left, top)
   9: { x: 50,  y: 300 },  // Kengeri Bus Terminal (far left, middle)
+  10: { x: 620, y: 380 }, // Banashankari Temple BSK
+  11: { x: 780, y: 350 }, // Apollo Hospital Bannerghatta
+  12: { x: 740, y: 450 }, // JP Nagar Metro Station
+  13: { x: 800, y: 280 }, // Fortis Hospital Bannerghatta Road
 };
 
 // ============================================================

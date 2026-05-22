@@ -977,6 +977,15 @@ h5 { font-size: 1rem; }
   cursor: pointer;
 }
 
+.marker-container {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+}
+
 .hospital-marker {
   width: 32px;
   height: 32px;
