@@ -89,8 +89,8 @@ export default function MapView() {
           return `${loc.lng},${loc.lat}`;
         }).join(';');
 
-        // Query the live driving road directions from Mapbox
-        fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/${pathCoordsString}?geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`)
+        // Query live driving road directions from Mapbox with LIVE TRAFFIC
+        fetch(`https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${pathCoordsString}?geometries=geojson&overview=full&annotations=congestion,duration&access_token=${MAPBOX_TOKEN}`)
           .then(res => res.json())
           .then(data => {
             setIsFetchingRoute(false);
@@ -309,9 +309,12 @@ export default function MapView() {
                   Routing Algorithm
                 </div>
                 <div style={{ fontSize: '11px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-subtle)', padding: '8px 10px', borderRadius: '6px', lineHeight: '1.4' }}>
-                  <strong>Dijkstra's Single-Source Shortest Path (SSSP):</strong>
-                  <div style={{ marginTop: '3px', color: 'var(--text-secondary)' }}>
-                    Computes the absolute shortest path from source node <strong>{emergencyRequest?.sourceNodeId}</strong> to suitable hospitals. It evaluates real road weights combined with live traffic density.
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                    <strong>Dijkstra's SSSP + Mapbox Live Traffic</strong>
+                    <span style={{ background: '#10b981', color: '#fff', fontSize: '9px', fontWeight: '800', padding: '1px 5px', borderRadius: '4px', letterSpacing: '0.05em' }}>🟢 LIVE</span>
+                  </div>
+                  <div style={{ color: 'var(--text-secondary)' }}>
+                    Graph SSSP finds the optimal hospital. Route geometry is then fetched from <strong>Mapbox driving-traffic</strong> API using real-time congestion data to draw the fastest actual road path from node <strong>{emergencyRequest?.sourceNodeId}</strong>.
                   </div>
                 </div>
               </div>
