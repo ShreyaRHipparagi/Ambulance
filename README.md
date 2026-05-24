@@ -1,393 +1,456 @@
 # 🚑 Smart Ambulance Routing & Hospital Allocation System
 
-An advanced, real-time spatial pathfinding and clinical resource allocation system designed to optimize emergency response times in South Bangalore (centered around JSS Academy of Technical Education, Uttarahalli). 
-
-This project maps physical geographies into weighted topological graph schemas, computes Single-Source Shortest Paths (SSSP) via customized Dijkstra & A* engines, matches department specialties, and audits transaction allocations inside relational database records.
+> **VTU 4th Semester CSE Mini-Project** — Mapping four core CS subjects onto a real emergency-response system built for South Bangalore (centered on JSSATE, Uttarahalli).
 
 ---
 
-## 🎓 Academic Syllabus Mappings (VTU 4th Semester CSE)
+## 🎓 Academic Syllabus Mappings
 
-This application is engineered specifically to demonstrate clean implementations of four core Computer Science subjects. Each component maps directly to syllabus theory, making it highly effective for live demos, academic reviews, and viva examinations:
-
-| Subject Badge | Academic Focus Area | project Integration |
-| :--- | :--- | :--- |
-| **`BCS401` ADA** | **Analysis & Design of Algorithms** | SSSP algorithms, binary min-heap Priority Queue implementations, A* heuristics search, and asymptotic time complexity analyses $O((V+E) \log V)$. |
-| **`BCS405B` GT** | **Graph Theory & Applications** | Vertex-edge spatial topological network representation, key-value adjacency lists representation, BFS/DFS traversal mechanics, and degree reachability verification. |
-| **`BCS403` DBMS** | **Database Management Systems** | Relational schemas normalized to 3NF, curved interactive SVG Entity-Relationship schema diagram, relational algebra joins simulation, and persistent historical transaction audit logs. |
-| **`BCS402` OOCJ** | **Object Oriented Concepts** | Strict encapsulation of graph models (`CityGraph`, `Edge`), modular service components, state singletons via React context structures, and theme decoupling. |
+| Badge | Subject | How This Project Demonstrates It |
+|:------|:--------|:---------------------------------|
+| **`BCS401` ADA** | Analysis & Design of Algorithms | Dijkstra SSSP O((V+E)logV), A* with GPS heuristic, binary min-heap priority queue, BFS/DFS traversal with step-by-step tracing |
+| **`BCS405B` GT** | Graph Theory & Applications | Weighted undirected graph G=(V,E), adjacency-list representation, reachability, degree analysis, shortest-path proofs |
+| **`BCS403` DBMS** | Database Management Systems | Relational schema (8 tables, 3NF), ER diagram with PK/FK annotations, persistent audit log via `localStorage`, bed-count transactions |
+| **`BCS402` OOCJ** | Object Oriented Concepts with Java | Class encapsulation (`CityGraph`, `DijkstraEngine`, `RecommendationService`), single-responsibility, dependency injection via React context |
 
 ---
 
-## ✨ System Features
+## ✨ Complete Feature List
 
-### 1. 🧮 Advanced Algorithmic Search Engines (`BCS401` / `BCS405B`)
-- **Dijkstra's SSSP Engine**: Computes the absolute shortest path to all candidate hospitals by evaluating road distances and live traffic multiplier factors.
-- **A\* Search Engine**: Incorporates straight-line GPS heuristic distances $h(n)$ to prune the evaluated node space and accelerate convergence.
-- **Priority Queue Min-Heap**: Backs both search algorithms in JavaScript to ensure sub-millisecond computations ($O((V+E)\log V)$).
-- **BFS & DFS Traversal**: Fully visualizes topological search patterns, illustrating levels queue scheduling and depth backtracking.
+### 🧮 Algorithm Engines (`BCS401 / BCS405B`)
+- **Dijkstra's SSSP** — weighted shortest path considering real road distances + traffic multipliers
+- **A\* Search** — GPS Haversine heuristic `h(n)` for faster convergence; `f(n) = g(n) + h(n)`
+- **BFS** — level-by-level queue traversal with full step capture
+- **DFS** — recursive stack-based traversal with backtracking visualization
+- **Binary Min-Heap Priority Queue** — pure JS implementation backing Dijkstra and A*
 
-### 2. 🗺️ Real-world GIS Integration (`BCS405B`)
-- **Mapbox Streets Day theme (`streets-v12`)**: High-contrast, clean OSM maps displaying the JSSATE Bangalore region.
-- **Precise GPS Mapping**: Hardcoded GPS coordinates of major landmarks: JSSATE Uttarahalli, BGS Gleneagles Hospital, Sagar Hospitals DSI, RRMCH, and prominent road intersections.
-- **Mapbox Directions API Integration**: Asynchronously requests and draws true road-matched street line paths from the live Mapbox service.
-- **Ambulance Driving Animation**: Employs **Turf.js** to run smooth 60fps driving animations along calculated street routes.
-- **Distance Badges**: Edge distances (in km) are projected as floating mid-point text labels directly on map routes.
+### 🗺️ Live Map & GIS (`BCS405B`)
+- **Mapbox GL JS** with `streets-v12` style — real OSM base map
+- **Mapbox Directions `driving-traffic` API** — live real-time traffic routing (not just static roads)
+- **Per-segment congestion coloring** — route line color-coded green/amber/red per Mapbox traffic annotation
+- **Ambulance animation** — smooth 60fps Turf.js path animation with directional heading (emoji rotates to face direction of travel, bearing offset corrected by -90°)
+- **Distance badges** — km labels floating at mid-point of every edge on the map
+- **13 real GPS nodes** — verified coordinates of Bangalore landmarks
+- **6 hospitals** — real addresses, contacts, specializations
+- **Route congestion legend** — appears on map bottom-left when route is active
+- **Live stats bar** — Mapbox distance, live ETA, dominant congestion, last updated time
+- **Refresh Route** button — re-fetches route with current traffic conditions
 
-### 3. 📊 Relational Schema ER Visualizer (`BCS403`)
-- **Interactive SVG Grid**: Pre-positioned cards showing 8 database entities in a clean coordinate system.
-- **Curved Relational Connectors**: Bezier path lines map PK-to-FK constraints with directional arrowhead endpoints.
-- **Hover Highlighting & Explanations**: Hovering over lines or tables activates glowing outlines and prints active relational constraints (e.g. `1:N ON patients.patient_id = emergency_cases.patient_id`).
+### 🏥 Emergency Routing System (`BCS401`)
+- Patient intake form: name, age, contact, blood group, source node, emergency type, ICU requirement
+- 6 emergency types: CARDIAC, TRAUMA, NEURO, BURNS, MATERNITY, GENERAL
+- Multi-step hospital filtering: Specialization → Bed Availability → Dijkstra SSSP
+- Primary + Backup hospital recommendation
+- Algorithm filtering steps displayed on Results page
 
-### 4. 🎨 State-of-the-Art UX/UI (`BCS402`)
-- **Dual Mode (Light & Dark Themes)**: Fluid, instant styling toggling throughout the app.
-- **High Contrast Light Theme**: Hand-tailored color palettes (e.g. slate-blue `#cbd5e1` for unvisited nodes) designed for maximum visibility.
-- **Math Principle Overlay**: Interactive formulas and evaluation tables show step-by-step variables ($f(n) = g(n) + h(n)$) during search iterations.
+### 📊 Algorithm Visualizer (`BCS401 / BCS405B`)
+- SVG graph canvas with all 13 nodes and 23 edges
+- Step-by-step playback with configurable speed (0.5× to 3×)
+- Node coloring: source (red), target (amber), visiting (cyan), visited (blue), hospital (green)
+- Edge animation: dashed pulsing for edges being explored
+- Sidebar: distance table, priority queue state, A* gScore/fScore/hScore breakdown
 
----
+### 🗃️ Persistent Data (`BCS403`)
+- **Emergency history** — stored in `localStorage['emergency_history']`, survives page refresh
+- **Hospital bed counts** — stored in `localStorage['hospital_beds']`, edits persist
+- **Clear History** button on History page
+- **Theme preference** — stored in `localStorage['theme']`
 
-## 📂 Directory Layout
-
-```text
-AMBULANCE/
-├── public/                 # Static assets
-├── src/
-│   ├── context/
-│   │   └── AppContext.jsx  # Global state manager & database mock transaction audits
-│   ├── data/
-│   │   └── cityData.js     # Physical coordinate systems, schema data, Mapbox keys
-│   ├── engine/
-│   │   ├── PriorityQueue.js # JS Binary Min-Heap
-│   │   ├── CityGraph.js    # Graph structure & Adjacency lists
-│   │   ├── BFSEngine.js    # Queue BFS step tracing
-│   │   ├── DFSEngine.js    # Stack DFS step tracing
-│   │   ├── DijkstraEngine.js # Dijkstra SSSP step tracing
-│   │   └── AStarEngine.js  # A* Search step tracing
-│   ├── pages/
-│   │   ├── Dashboard.jsx   # Active operations monitor
-│   │   ├── EmergencyEntry.jsx # Case intake form
-│   │   ├── AlgorithmVisualizer.jsx # Step-by-step SVG graph animation page
-│   │   ├── MapView.jsx     # Live Mapbox & Turf.js driving animation
-│   │   ├── Results.jsx     # SSSP routing comparisons
-│   │   ├── Hospitals.jsx   # Clinical resources database manager
-│   │   ├── ERDiagram.jsx   # SVG Relational ER schema diagram
-│   │   ├── History.jsx     # Simulated audit log tables
-│   │   └── About.jsx       # Academic Syllabus Map
-│   ├── App.css             # Component styling
-│   ├── App.jsx             # Shell navbar & route coordinator
-│   ├── index.css           # Global CSS variables & layout engines
-│   └── main.jsx            # React root binder
-├── COMPREHENSIVE_DOCUMENTATION.md # Complete architectural function traceability document
-├── package.json            # Vite dependencies
-└── vite.config.js          # Build setup
-```
+### 📐 ER Diagram (`BCS403`)
+- Interactive SVG with 8 database entities
+- Hover-activated Bezier relationship connectors with PK→FK annotations
+- Relationship cardinality: 1:N, 1:1 displayed on lines
 
 ---
 
-## 🚀 Running the Project Locally
+## 🗺️ City Graph — 13 Nodes, 6 Hospitals
 
-Follow these commands to install dependencies, run the development environment, or compile a production bundle:
+### Nodes
 
-### 1. Prerequisite
-Ensure you have **Node.js (v18.0.0 or higher)** and **npm** installed on your machine. You can check your version by running:
+| ID | Location | Area | Coordinates |
+|----|----------|------|-------------|
+| 1 | JSSATE College Campus (main road junction) | Uttarahalli | 12.9060, 77.5028 |
+| 2 | JP Nagar 6th Phase | JP Nagar | 12.9060, 77.5815 |
+| 3 | Kumaraswamy Layout (DSI) | Kumaraswamy Layout | 12.8950, 77.5550 |
+| 4 | Sagar Hospitals (DSI) 🏥 | Kumaraswamy Layout | 12.9085, 77.5660 |
+| 5 | BGS Gleneagles Hospital 🏥 | Sunkalpalya | 12.8985, 77.4984 |
+| 6 | Astra Specialty Hospital 🏥 | Konanakunte Cross | 12.8945, 77.5615 |
+| 7 | Padmanabhanagar Circle | Padmanabhanagar | 12.9180, 77.5480 |
+| 8 | RRMCH Mysore Road 🏥 | Mysore Road | 12.8963, 77.4619 |
+| 9 | Kengeri Bus Terminal | Kengeri | 12.9115, 77.4810 |
+| 10 | Banashankari Temple (BSK) | Banashankari | 12.9150, 77.5730 |
+| 11 | Apollo Hospital Bannerghatta 🏥 | JP Nagar | 12.8963, 77.5985 |
+| 12 | JP Nagar Metro Station | JP Nagar | 12.9073, 77.5731 |
+| 13 | Fortis Hospital Bannerghatta 🏥 | JP Nagar | 12.8948, 77.5988 |
+
+### Hospitals (6 total)
+
+| ID | Hospital | Node | Specializations | ICU | General |
+|----|----------|------|----------------|-----|---------|
+| H1 | RRMCH Mysore Road | 8 | GENERAL, TRAUMA, MATERNITY | 1/5 | 5/12 |
+| H2 | Sagar Hospitals DSI | 4 | TRAUMA, BURNS | 3/8 | 8/15 |
+| H3 | BGS Gleneagles Global | 5 | CARDIAC, GENERAL, MATERNITY | 2/10 | 4/20 |
+| H4 | Astra Super Speciality | 6 | NEURO, GENERAL | 4/6 | 6/10 |
+| H5 | Apollo Hospital Bannerghatta | 11 | CARDIAC, NEURO, BURNS | 5/12 | 11/25 |
+| H6 | Fortis Hospital Bannerghatta | 13 | CARDIAC, TRAUMA, NEURO | 4/10 | 9/22 |
+
+### Road Edges (23 total)
+
+| Edge | From→To | Distance | Road Name | Traffic Multiplier |
+|------|---------|----------|-----------|-------------------|
+| e1 | 1→3 | 6.2 km | Uttarahalli-Kumaraswamy Rd | 1.0 |
+| e2 | 1→5 | 1.2 km | Dr. Vishnuvardhan Road | 1.0 |
+| e3 | 1→6 | 5.8 km | Kanakapura Main Road | 1.5 |
+| e4 | 1→8 | 7.2 km | Uttarahalli-RR Nagar Rd | 1.2 |
+| e5 | 1→9 | 3.8 km | Kengeri-Uttarahalli Main Rd | 1.0 |
+| e6 | 3→7 | 2.8 km | KS Layout Inner Ring | 1.3 |
+| e7 | 3→4 | 1.5 km | 26th Main Road | 1.5 |
+| e8 | 3→2 | 3.2 km | Bannerghatta Road Link | 2.0 |
+| e9 | 7→4 | 1.8 km | Padmanabhanagar-Jayanagar Rd | 1.2 |
+| e10 | 7→2 | 4.2 km | JP Nagar Link Road | 1.5 |
+| e11 | 4→6 | 3.5 km | Jayanagar-Banashankari Rd | 1.8 |
+| e13 | 8→9 | 4.8 km | Kengeri-RR Nagar Highway | 1.0 |
+| e14 | 5→9 | 2.9 km | Uttarahalli-Kengeri Ring Rd | 1.2 |
+| e15 | 10→6 | 2.2 km | Outer Ring Road (BSK) | 1.5 |
+| e16 | 10→2 | 2.5 km | Kanakapura-JP Nagar Rd | 1.2 |
+| e17 | 10→7 | 3.0 km | BSK 2nd Stage Ring Rd | 1.3 |
+| e18 | 11→2 | 2.0 km | Bannerghatta Main Road | 1.8 |
+| e19 | 11→3 | 4.5 km | Arekere-KS Layout Link | 1.4 |
+| e20 | 12→2 | 1.2 km | Kanakapura-JP Nagar Link | 1.4 |
+| e21 | 12→10 | 1.8 km | Sarakki Signal Road | 1.6 |
+| e22 | 12→4 | 1.5 km | DSI Road Link | 1.3 |
+| e23 | 13→11 | 0.8 km | Bannerghatta Main Road | 1.8 |
+| e24 | 13→2 | 2.2 km | JP Nagar 15th Cross Rd | 1.2 |
+
+---
+
+## 🚀 Running the Project
+
+### Prerequisites
 ```bash
-node -v
+node -v   # Must be v18.0.0 or higher
 npm -v
 ```
 
-### 2. Installation
-Navigate to the project root directory and install all required modules:
+### Install Dependencies
 ```bash
-# Install package dependencies
+cd AMBULANCE
 npm install
 ```
 
-### 3. Development Server
-Start the high-performance local Vite dev server:
+### Start Development Server
 ```bash
-# Start local environment
 npm run dev
 ```
-Once started, the terminal will print the local URI. Typically, you can access the interface at:
-👉 **[http://localhost:5173](http://localhost:5173)**
+Open **http://localhost:5173** in your browser.
 
-### 4. Build for Production
-To compile and package the application into highly-optimized, static assets inside the `dist/` directory:
+### Build for Production
 ```bash
-# Compile project
 npm run build
 ```
+Output goes to `dist/`. Serve with any static file server.
 
-### 5. Preview Production Bundle
-To spin up a local server to preview the compiled static production assets:
+### Preview Production Build
 ```bash
-# Run local preview
 npm run preview
 ```
 
 ---
 
-## 🏗️ System Architecture & Code Traceability Blueprint
+## 📂 Project Directory Structure
 
-### 1. System Architecture Layout
-
-The following diagram illustrates how the frontend components, context states, mathematical routing engines, external GIS APIs, and relational schemas interact:
-
-```mermaid
-graph TD
-    %% Styling
-    classDef page fill:#1e1b4b,stroke:#818cf8,stroke-width:2px,color:#fff
-    classDef engine fill:#111827,stroke:#06b6d4,stroke-width:2px,color:#fff
-    classDef context fill:#062f4f,stroke:#10b981,stroke-width:2px,color:#fff
-    classDef data fill:#312e81,stroke:#ec4899,stroke-width:2px,color:#fff
-
-    %% Components
-    A[Dashboard UI / Emergency Entry]:::page
-    B[AppContext Provider State]:::context
-    C[Recommendation Service]:::engine
-    D[CityGraph Network Topology]:::data
-    E[Dijkstra Engine / A* Engine]:::engine
-    F[Mapbox Directions API]:::engine
-    G[Interactive SVG ER Diagram]:::page
-    H[Audits Allocation Database Logs]:::data
-
-    %% Interconnections
-    A -->|1. Triggers Emergency Request| B
-    B -->|2. Invokes recommendation| C
-    C -->|3. Query active structure| D
-    C -->|4. Runs pathfinder algorithms| E
-    B -->|5. Recalls optimal path features| A
-    A -->|6. Load paths onto Map View| F
-    G -->|7. Documents relational schema| H
-    B -->|8. Inserts audit transaction records| H
+```
+AMBULANCE/
+├── index.html                        # Vite HTML entry point
+├── vite.config.js                    # Vite build configuration
+├── package.json                      # Dependencies: mapbox-gl, turf, framer-motion, lucide-react
+│
+├── src/
+│   ├── main.jsx                      # React DOM root — wraps App in AppProvider
+│   ├── App.jsx                       # Router, Navbar, theme toggle, route definitions
+│   ├── App.css                       # Component-level styles (navbar, layout)
+│   ├── index.css                     # Global design system: CSS variables, animations,
+│   │                                 # glassmorphism, marker styles, bed bars, timeline
+│   │
+│   ├── context/
+│   │   └── AppContext.jsx            # ★ Global state manager
+│   │                                 #   - Builds CityGraph from cityData.js
+│   │                                 #   - Holds: hospitals, history, emergencyResult,
+│   │                                 #     emergencyRequest, theme, trafficEnabled
+│   │                                 #   - Persists history → localStorage['emergency_history']
+│   │                                 #   - Persists bed counts → localStorage['hospital_beds']
+│   │                                 #   - Exposes: runRecommendation(), updateBeds(),
+│   │                                 #     addToHistory(), clearHistory(), toggleTheme()
+│   │
+│   ├── data/
+│   │   └── cityData.js               # ★ Static database
+│   │                                 #   - MAPBOX_TOKEN (split string for git safety)
+│   │                                 #   - LOCATIONS (13 GPS nodes)
+│   │                                 #   - EDGES (23 weighted bidirectional edges)
+│   │                                 #   - ROUTE_COORDS (Mapbox waypoints per edge)
+│   │                                 #   - HOSPITALS (6 hospitals with beds/specs)
+│   │                                 #   - EMERGENCY_TYPES (6 types with icons)
+│   │                                 #   - NODE_POSITIONS (SVG x,y for visualizer)
+│   │                                 #   - SUBJECTS, PAGE_SUBJECTS (academic mappings)
+│   │
+│   ├── engine/
+│   │   ├── PriorityQueue.js          # Binary min-heap: insert O(logN), extractMin O(logN)
+│   │   ├── CityGraph.js              # Graph: addNode, addEdge (bidirectional),
+│   │   │                             #        getNeighbors, getEffectiveWeight(useTraffic)
+│   │   ├── DijkstraEngine.js         # SSSP with full step trace: O((V+E)logV)
+│   │   ├── AStarEngine.js            # A* with Haversine heuristic + step trace
+│   │   ├── BFSEngine.js              # BFS with level-by-level step trace
+│   │   ├── DFSEngine.js              # DFS with recursive backtracking step trace
+│   │   └── RecommendationService.js  # Hospital recommendation pipeline:
+│   │                                 #   filter by spec → filter by beds → Dijkstra per hospital
+│   │
+│   └── pages/
+│       ├── Dashboard.jsx             # Stats, hospital status bars, recent history, nav cards
+│       ├── EmergencyEntry.jsx        # Patient intake form → calls runRecommendation()
+│       ├── Results.jsx               # Displays primary/backup hospital, path, ETA, filter steps
+│       ├── MapView.jsx               # ★ Interactive Mapbox map
+│       │                             #   - driving-traffic API (live traffic routing)
+│       │                             #   - Congestion-colored route per segment
+│       │                             #   - Ambulance animation with bearing rotation
+│       │                             #   - Live stats bar (distance, ETA, congestion)
+│       │                             #   - Refresh Route button
+│       ├── AlgorithmVisualizer.jsx   # SVG step-by-step algorithm animation
+│       ├── Hospitals.jsx             # Hospital resource manager (bed count editor)
+│       ├── ERDiagram.jsx             # Interactive SVG ER diagram (8 entities)
+│       ├── History.jsx               # Audit log with Clear History button
+│       └── About.jsx                 # Academic syllabus map page
+│
+├── README.md                         # This file
+├── COMPREHENSIVE_DOCUMENTATION.md    # Deep-dive architecture & function call trace
+└── dist/                             # Production build output (after npm run build)
 ```
 
 ---
 
-### 2. End-to-End Functional Execution Pipelines
+## 🏗️ System Architecture
 
-#### Flow 1: Emergency Case Creation & Optimal Hospital Recommendation
-When a user enters a new emergency case, the following function execution sequence is executed:
+```mermaid
+graph TD
+    classDef ui fill:#1e1b4b,stroke:#818cf8,stroke-width:2px,color:#fff
+    classDef ctx fill:#062f4f,stroke:#10b981,stroke-width:2px,color:#fff
+    classDef eng fill:#111827,stroke:#06b6d4,stroke-width:2px,color:#fff
+    classDef data fill:#312e81,stroke:#ec4899,stroke-width:2px,color:#fff
+    classDef ext fill:#1c1917,stroke:#f59e0b,stroke-width:2px,color:#fff
+    classDef store fill:#064e3b,stroke:#34d399,stroke-width:2px,color:#fff
 
-1. **`EmergencyEntry.jsx` (UI Trigger)**:
-   - The user selects an emergency type (e.g. `CARDIAC`), selects an intersection Node ID (e.g. Node `1`), toggles ICU requirements (`needsIcu = true`), and enters a patient name.
-   - On submit, `handleSubmit()` fires.
-   - It invokes the global `runRecommendation(request)` action exported from `AppContext.jsx`.
+    A[EmergencyEntry.jsx\nPatient Form]:::ui
+    B[AppContext.jsx\nGlobal State]:::ctx
+    C[RecommendationService.js\nPipeline]:::eng
+    D[CityGraph.js\nAdjacency List]:::data
+    E[DijkstraEngine.js\nSSSP]:::eng
+    F[Mapbox driving-traffic API\nLive Traffic Route]:::ext
+    G[MapView.jsx\nLive Map]:::ui
+    H[AlgorithmVisualizer.jsx\nSVG Steps]:::ui
+    I[Results.jsx\nRoute Summary]:::ui
+    J[History.jsx\nAudit Log]:::ui
+    K[localStorage\nhospital_beds\nemergency_history\ntheme]:::store
+    L[cityData.js\nStatic DB]:::data
 
-2. **`AppContext.jsx` (Global State Manager)**:
-   - Sets the state `setEmergencyRequest(request)`.
-   - Creates a new instance of `RecommendationService` and calls `service.recommend(request)`.
-
-3. **`RecommendationService.js` (Prioritization & Routing Dispatcher)**:
-   - `recommend(request)` evaluates all candidate hospitals in the database.
-   - Filters candidate hospitals that can accept the emergency type by querying their `specializations` array.
-   - For each matching candidate hospital, it executes Dijkstra's Single-Source Shortest Path (SSSP) algorithm:
-     ```javascript
-     const dijkstra = new DijkstraEngine(this.graph);
-     const result = dijkstra.run(request.sourceNodeId, hospital.nodeId, true);
-     ```
-   - Compares calculations (driving cost distance in km, active traffic multipliers, available bed capacity).
-   - Identifies the **Primary Recommended Hospital** (minimum cost path with bed capacity) and an optional **Backup Recommended Hospital** (next best).
-   - Returns the recommendation result structure containing paths, costs, and hospital records.
-
-4. **`AppContext.jsx` (State Save & Audit Logging)**:
-   - Captures recommendation results via `setEmergencyResult(result)`.
-   - Executes an audit log transaction insert into the history list:
-     ```javascript
-     addToHistory({
-       patientName: request.patientName,
-       emergencyType: request.emergencyType,
-       sourceNodeId: request.sourceNodeId,
-       primaryHospital: result.primary.hospital.name,
-       routeCost: result.primary.cost,
-       path: result.primary.path,
-       allocatedAt: new Date().toISOString()
-     });
-     ```
-
-5. **`Results.jsx` (UI Display)**:
-   - Listens to `emergencyResult` updates.
-   - Renders a comparison breakdown displaying SSSP path legs, optimal routing time, recommended ICU statuses, and alternative paths.
-
----
-
-#### Flow 2: Live Driving Directions & Mapbox Routing Animation
-Once a route is successfully calculated, the user views the path on the interactive map:
-
-1. **`MapView.jsx` (Map Initialization)**:
-   - Initializes `mapboxgl.Map` with premium streets day styling (`mapbox://styles/mapbox/streets-v12`) centered near the JSSATE College coordinates.
-   - Renders custom HTML circular badges for each intersection node displaying the Node ID (`1`, `2`, ..., `13`) with scale-up CSS transitions and defined width/height.
-   - Prevents GPU compositor translation bugs using hardware-accelerated wrapper layering.
-   - Overrides Mapbox popup default backgrounds to adapt dynamically to light/dark themes (`.mapboxgl-popup-content { background: var(--bg-card) }`).
-
-2. **`MapView.jsx` (GeoJSON Directions Fetching)**:
-   - If an active emergency result is found, it extracts the node path (e.g. `[1, 9, 5]`).
-   - Converts the array of nodes into a GPS longitude/latitude path coordinates sequence.
-   - Issues an asynchronous `fetch` request to the Mapbox Directions API:
-     ```
-     https://api.mapbox.com/directions/v5/mapbox/driving/{lng1},{lat1};{lng2},{lat2};...;{lngN},{latN}?geometries=geojson&access_token={MAPBOX_TOKEN}
-     ```
-   - On success:
-     - Extracts the road-matched GeoJSON driving line geometry.
-     - Adds a Mapbox line layer (`highlight-route`) to overlay the precise street path.
-   - On failure (Fallback):
-     - Connects nodes using hardcoded segment coordinate arrays from `ROUTE_COORDS` in `cityData.js`.
-
-3. **`MapView.jsx` (Ambulance Driving Animation)**:
-   - Clicking **Run Animation** calls `runAnimation()`.
-   - Uses **Turf.js** helper libraries to compute path geometry properties:
-     - `turf.length(route)` calculates overall driving distance in kilometers.
-   - Employs an extra smooth rendering loop via `requestAnimationFrame(animate)`.
-   - For each frame, it computes `turf.along(route, currentProgressDistance)` to fetch the exact sub-coordinate.
-   - Sets the ambulance circular pin marker position `marker.setLngLat(...)` dynamically, creating a realistic, street-aligned driving simulation.
+    L -->|LOCATIONS EDGES HOSPITALS| D
+    L -->|LOCATIONS EDGES HOSPITALS| B
+    A -->|handleSubmit → runRecommendation| B
+    B -->|new RecommendationService| C
+    C -->|getNeighbors getEffectiveWeight| D
+    C -->|dijkstra.run per hospital| E
+    E -->|PriorityQueue extractMin| D
+    C -->|ranked results| B
+    B -->|setEmergencyResult| I
+    B -->|setEmergencyResult| G
+    B -->|addToHistory| J
+    B -->|updateBeds| K
+    J -->|clearHistory| K
+    K -->|init read| B
+    G -->|fetch pathCoordsString| F
+    F -->|GeoJSON + congestion annotations| G
+    G -->|turf.along animate| G
+    H -->|AStarEngine BFSEngine DFSEngine| D
+```
 
 ---
 
-#### Flow 3: Step-by-Step Graph Algorithm Visualization
-In the academic visualizer, the user runs pathfinders to inspect algorithm steps:
+## 🔄 End-to-End Data Flow
 
-1. **`AlgorithmVisualizer.jsx` (Node Selection Highlight)**:
-   - Source node and Target node dropdown selections dynamically update `sourceNode` and `targetNode` in the context state.
-   - `getNodeClass(nodeId)` instantly intercepts these:
-     ```javascript
-     if (nodeId === sourceNode) return 'node-source'; // Red circle
-     if (nodeId === targetNode) return 'node-target'; // Green circle
-     ```
-   - This changes node colors on the SVG canvas instantly, before the algorithm runs.
+### Flow 1: Emergency Case → Hospital Recommendation
 
-2. **`AlgorithmVisualizer.jsx` (Algorithm Dispatcher)**:
-   - Clicking **Play** or **Step Forward** calls `handleRun()`.
-   - Instantiates the corresponding search engine (`AStarEngine`, `DijkstraEngine`, `BFSEngine`, or `DFSEngine`).
-   - Executes the engine's `.run(source, target)` method.
-   - Returns a structured array of **step states**, representing snapshots of data structures at every cycle:
-     - For Dijkstra: queue state (`pq`), visited sets, current checking node, relaxed edges, and intermediate distance maps.
-     - For A*: `gScore` (actual cost distance), `hScore` (GPS heuristic value), and `fScore` ($f = g + h$) evaluations maps.
+```
+User fills EmergencyEntry form
+  ↓
+handleSubmit() [EmergencyEntry.jsx:20]
+  ↓ parseInt(sourceLocationId), needsIcu, emergencyType
+runRecommendation(request) [AppContext.jsx:106]
+  ↓
+new RecommendationService(graph, hospitals) [AppContext.jsx:107]
+service.recommend(request) [RecommendationService.js:10]
+  ↓ Step 1: filter hospitals by specializations.includes(emergencyType)
+  ↓ Step 2: filter by icuBedsAvailable > 0 (or generalBedsAvailable)
+  ↓ Step 3: for each candidate hospital:
+      new DijkstraEngine(graph).run(sourceNodeId, hospital.nodeId, useTraffic)
+        ↓
+        PriorityQueue.insert(source, 0)
+        loop: u = pq.extractMin()
+          getNeighbors(u) → for each v:
+            w = getEffectiveWeight(u, v, useTraffic) = edge.weight * trafficMultiplier
+            if dist[u] + w < dist[v]: relax, pq.insert(v, newDist)
+        → returns { found, cost, path, steps }
+  ↓ Sort candidates by cost ascending
+  → { primary: cheapest, backup: second cheapest, filterSteps, explanation }
+setEmergencyResult(result) [AppContext.jsx:110]
+addToHistory(entry) [AppContext.jsx:112] → localStorage['emergency_history']
+navigate('/results') [EmergencyEntry.jsx:36]
+```
 
-3. **`AlgorithmVisualizer.jsx` (Visualization Loop)**:
-   - A `setInterval` timer increments `currentStepIndex` based on selected playback speeds.
-   - The SVG canvas styles edges and nodes dynamically:
-     - Nodes in active exploration are colored Cyan (`node-visiting`).
-     - Nodes completed are colored Blue (`node-visited`).
-     - Edges actively relaxing pulse with animated dashes (`edge-exploring`).
-     - Optimal paths display with thick cyan highlights (`edge-path`).
-     - Auxiliary tables display mathematical updates (A* evaluation arrays $f(n) = g(n) + h(n)$) cycle by cycle.
+### Flow 2: Live Traffic Map Route
+
+```
+MapView.jsx mounts [useEffect]
+  ↓
+mapboxgl.Map({ style: 'streets-v12', center: [77.5250, 12.9080], zoom: 12.5 })
+map.on('load'):
+  ↓ Draw 23 graph edges as dark grey GeoJSON LineStrings
+  ↓ Add distance badge markers at edge midpoints
+  ↓ if emergencyResult.primary: fetchAndDrawRoute(map, path)
+      ↓
+      pathCoordsString = path.map(id → `${lng},${lat}`).join(';')
+      fetch(`mapbox/directions/v5/mapbox/driving-traffic/${pathCoordsString}
+             ?geometries=geojson&overview=full&annotations=congestion,duration`)
+        ↓ Response: { routes[0]: { geometry, legs[].annotation.congestion[] } }
+      mapRouteGeometryRef.current = geometry
+      setLiveRouteData({ distance, duration, dominantCongestion, congestionCounts })
+      ↓
+      addSource('highlight-route', geometry)         → cyan glow bg layer (opacity 0.18)
+      addSource('highlight-route-congestion', ...)   → per-segment colored segments
+        each segment: color = CONGESTION_CONFIG[congestion[i]].color
+        green=#10b981 / amber=#f59e0b / red=#ef4444 / severe=#dc2626
+  ↓ Add 13 node markers (source=pulsing, destination=🎯 green, hospitals=🏥)
+
+Run Animation button clicked:
+  runAnimation() [MapView.jsx:275]
+    ↓
+    pathCoords = mapRouteGeometryRef.current.coordinates
+    route = turf.featureCollection LineString
+    lineDistance = turf.length(route, { units: 'km' })
+    mapboxgl.Marker({ element: '🚑', rotationAlignment: 'map' })
+    fitBounds(pathCoords, { padding: 80, duration: 1000 })
+    requestAnimationFrame(animate):
+      progress = (timestamp - startTime) / 8000
+      point = turf.along(route, progress * lineDistance)
+      marker.setLngLat(point.coordinates)
+      bearing = turf.bearing(prevPoint, point)
+      marker.setRotation(bearing - 90)   ← -90 corrects for 🚑 facing right by default
+```
+
+### Flow 3: Algorithm Visualizer Step Playback
+
+```
+User selects algorithm + source/target node
+handleRun() [AlgorithmVisualizer.jsx]
+  ↓
+  engine = new DijkstraEngine(graph)  | AStarEngine | BFSEngine | DFSEngine
+  { steps } = engine.run(sourceNode, targetNode, useTraffic)
+  setSteps(steps); setCurrentStep(0)
+
+Play button → setInterval every (800 / speed)ms:
+  setCurrentStep(i++)
+  step = steps[currentStep]
+  ↓
+  SVG re-renders:
+    nodes: getNodeClass(id) → 'node-source'|'node-target'|'node-visiting'|'node-visited'|'node-hospital'
+    edges: getEdgeClass(e) → 'edge-exploring' (dashed pulse) | 'edge-path' (cyan solid)
+  Sidebar: distance table updates, PQ state updates, A* gScore/fScore tables
+```
 
 ---
 
-### 3. Database Schema Relation Mappings
+## 🗄️ Data Persistence (localStorage)
 
-Structured relational models are documented and mapped visually inside `ERDiagram.jsx`:
+| Key | Content | Written by | Read by |
+|-----|---------|-----------|---------|
+| `theme` | `'dark'` or `'light'` | `AppContext toggleTheme` | `AppContext init` |
+| `emergency_history` | JSON array of case records | `AppContext addToHistory` + `useEffect` | `AppContext init` |
+| `hospital_beds` | JSON array of `{id, icuBedsAvailable, generalBedsAvailable}` | `AppContext updateBeds` | `AppContext init` |
 
-1. **Patients Table (`patients`)**:
-   - `patient_id` (PK) acts as unique patient token.
-2. **Emergency Cases Table (`emergency_cases`)**:
-   - `case_id` (PK) maps each incoming distress case.
-   - `patient_id` (FK) maps to `patients.patient_id` (1:N relationship).
-   - `source_location_id` (FK) maps to `location_nodes.node_id` (1:N relationship).
-3. **Hospitals Table (`hospitals`)**:
-   - `hospital_id` (PK) maps each medical institution.
-   - `location_node_id` (FK) maps to `location_nodes.node_id` (1:N relationship).
-4. **Hospital Specializations Table (`hospital_specializations`)**:
-   - `spec_id` (PK) records specialized departments.
-   - `hospital_id` (FK) maps to `hospitals.hospital_id` (1:N relationship).
-5. **Hospital Resources Table (`hospital_resources`)**:
-   - `resource_id` (PK) maps equipment counts.
-   - `hospital_id` (FK) maps to `hospitals.hospital_id` (1:1 relationship).
-6. **Location Nodes Table (`location_nodes`)**:
-   - `node_id` (PK) maps Bangalore physical intersections.
-7. **Road Edges Table (`road_edges`)**:
-   - `edge_id` (PK) maps bidirectional street segments.
-   - `from_node_id` (FK) maps to `location_nodes.node_id` (1:N relationship).
-8. **Allocations Table (`allocations`)**:
-   - `allocation_id` (PK) records dispatch transaction history logs.
-   - `case_id` (FK) maps to `emergency_cases.case_id` (1:N relationship).
-   - `hospital_id` (FK) maps to `hospitals.hospital_id` (1:N relationship).
-
-Every mathematical SSSP recommendation dispatch is fully traceable back to these database relations, ensuring full academic rigor and structural integrity.
+> ⚠️ There is **no backend database**. This is a pure frontend React/Vite application. The `BCS403 DBMS` subject is demonstrated through the **ER Diagram** page (relational schema design), the **History** page (audit log concept), and the **Hospitals** page (CRUD operations on resource data).
 
 ---
 
-### 4. Chronological Step-by-Step Function Call Trace Map
+## 🐛 Bug Fixes Applied
 
-To ensure absolute end-to-end traceability of the code, this section maps every single functional call sequence chronologically from starting the application, taking an emergency input, finding the path, drawing the map route, syncing the visualizer page, and displaying schema logs:
+| # | Severity | Bug | File | Fix Applied |
+|---|----------|-----|------|-------------|
+| 1 | 🔴 Critical | History wiped on every page refresh | `AppContext.jsx` | Persisted to `localStorage['emergency_history']` |
+| 2 | 🔴 Critical | Hospital bed edits lost on page refresh | `AppContext.jsx` | Persisted to `localStorage['hospital_beds']` |
+| 3 | 🔴 Critical | MATERNITY emergency always returned "No Hospital Found" (zero hospitals had it) | `cityData.js` | Added MATERNITY to RRMCH (H1) and BGS Gleneagles (H3) |
+| 4 | 🟡 Medium | Edge e14 route coords last waypoint didn't reach Node 9 (was 400m short) | `cityData.js` | Fixed last waypoint to `[77.4810, 12.9115]` |
+| 5 | 🟡 Medium | `needsIcu` missing from history entries (displayed `undefined` in History page) | `AppContext.jsx` | Added `needsIcu: request.needsIcu` to `addToHistory()` |
+| 6 | 🟡 Medium | Results ETA used 40 km/h hardcoded (too slow for emergency vehicles) | `Results.jsx` | Changed to 50 km/h |
+| 7 | 🟡 Medium | `sourceLocationId` stored as string from `<select>` causing type mismatch | `EmergencyEntry.jsx` | Added `parseInt()` on `onChange` |
+| 8 | 🟢 Minor | No way to clear persisted history | `History.jsx` + `AppContext.jsx` | Added "Clear History" button + `clearHistory()` |
+| 9 | 🟢 Minor | Node count comment said "9 nodes" but there are 13 | `cityData.js` | Updated comment |
+| 10 | 🟢 Routing | JSS campus internal road loop in ambulance route | `cityData.js` | Moved Node 1 coords to main road junction north of campus `(12.9060, 77.5028)` |
+| 11 | 🟢 Routing | Mapbox using static `driving` profile (no live traffic) | `MapView.jsx` | Switched to `driving-traffic` profile |
+| 12 | 🟢 Visual | Ambulance emoji facing wrong direction during animation | `MapView.jsx` | Fixed `setRotation(bearing - 90)` |
+| 13 | 🟢 Visual | All roads painted green (Mapbox traffic tile overlay on entire map) | `MapView.jsx` | Removed `mapbox-traffic-v1` tile source from map; kept route-level congestion colors |
 
-#### Step 1: Initialization & Context Setup
-1. **`main.jsx`** invokes `ReactDOM.createRoot().render()`.
-2. Encapsulates `<App />` within the global `<AppProvider>` defined in `src/context/AppContext.jsx`.
-3. **`AppProvider`** runs the following initializations:
-   - Evaluates `LOCATIONS` and `EDGES` in `cityData.js`.
-   - Instantiates a new `CityGraph` model: `const g = new CityGraph();`.
-   - Loops over locations and edges, adding nodes via `g.addNode(id, data)` and adding bidirectional edges via `g.addEdge(from, to, weight, attributes)`.
-   - Initializes reactive states: `hospitals` (with clinical capacities), `theme` (default 'dark' or loaded from `localStorage`), `emergencyRequest` (null), `emergencyResult` (null), `selectedAlgorithm` ('dijkstra'), `sourceNode` (1), `targetNode` (5), `trafficEnabled` (true).
-   - Dynamically sets the HTML root attribute: `document.documentElement.setAttribute('data-theme', theme)`.
+---
 
-#### Step 2: Emergency Case Entry
-1. User navigates to `/emergency` styled in **`EmergencyEntry.jsx`**.
-2. Form captures reactive input fields in `formData` (Patient Name, Age, Contact, Source Node ID, Emergency Type, ICU status).
-3. Clicking **Find Best Hospital & Route** triggers `onSubmit={handleSubmit}` in `EmergencyEntry.jsx`.
-4. `handleSubmit` calls `runRecommendation(request)` exposed from context.
-5. In **`AppContext.jsx`**, `runRecommendation` does:
-   - Sets `setEmergencyRequest(request)`.
-   - Instantiates `new RecommendationService(graph, hospitals)`.
-   - Invokes `service.recommend(request)`.
-6. In **`RecommendationService.js`**, `recommend()` executes the SSSP pipeline:
-   - Identifies clinical criteria (e.g. if case is `CARDIAC` and `needsIcu = true`, evaluates which hospitals have `specializations.includes('CARDIAC')` and `icuBedsAvailable > 0`).
-   - For each candidate hospital, instantiates `new DijkstraEngine(this.graph)`.
-   - Calls `dijkstra.run(sourceNodeId, hospital.nodeId, useTraffic)`.
-7. Inside **`DijkstraEngine.js`**:
-   - `run()` instantiates `new MinPriorityQueue()`.
-   - Initializes `distances` array with `Infinity` for all nodes except the source node (`0`).
-   - Inserts source node into priority queue: `pq.insert(sourceNodeId, 0)`.
-   - Enters SSSP relaxation loop:
-     - Pulls min-distance node: `const u = pq.extractMin()`.
-     - Iterates over adjacent edges from the adjacency list: `this.graph.getAdjacentEdges(u)`.
-     - Computes candidate path weight: `const weight = this.graph.getEffectiveWeight(u, v, useTraffic)`.
-     - Relaxes distances: if `distances[u] + weight < distances[v]`, updates `distances[v]`, sets `previous[v] = u`, and inserts/updates `pq.insert(v, new_dist)`.
-   - Returns the absolute shortest path array (`[1, 5]`) and total cumulative driving distance in km.
-8. **`RecommendationService.js`** compares path costs across all valid candidates, ranking them:
-   - `primary`: Hospital matching specifications with minimum Dijkstra path cost.
-   - `backup`: Next best hospital option matching specifications.
-9. In **`AppContext.jsx`**, `runRecommendation` intercepts the SSSP results:
-   - Updates global state: `setEmergencyResult(result)`.
-   - Calls `addToHistory(entry)` to record a persistent transaction audit row in the `history` array.
-10. `EmergencyEntry.jsx` navigates to `/results` via `navigate('/results')`.
+## 📐 Database Entity-Relationship Schema
 
-#### Step 3: Results Display & Map View Rendering
-1. **`Results.jsx`** receives active state `emergencyResult` and `emergencyRequest` from `useApp()`.
-2. Computes the optimal driving time (e.g., `(distance / 45) * 60` minutes) and lists the leg-by-leg routing nodes.
-3. User navigates to `/map` styled in **`MapView.jsx`**.
-4. **`MapView.jsx`** executes the Mapbox container initialization:
-   - Adds custom map styles to fix marker stacking: `import 'mapbox-gl/dist/mapbox-gl.css'`.
-   - Creates a new `mapboxgl.Map` instance centered in Bangalore near JSSATE.
-   - Loops over locations and draws pins. Custom HTML nodes show Node IDs directly on Mapbox pins: `el.className = 'location-marker'; el.innerHTML = loc.id;`.
-   - Overrides Mapbox popup default backgrounds to adapt dynamically to light/dark themes (`.mapboxgl-popup-content { background: var(--bg-card) }`).
-5. Mapbox GeoJSON Path Rendering:
-   - If `emergencyResult` exists, extracts the optimal node path (e.g. `[1, 9, 5]`).
-   - Converts the array of nodes into a GPS longitude/latitude path coordinates sequence.
-   - Issues a fetch request to the Mapbox Directions API using coordinates: `https://api.mapbox.com/directions/v5/mapbox/driving/lng1,lat1;...`.
-   - Adds source `highlight-route` layer to display a glowing cyan line (`#06b6d4`) matching real-world Bangalore street directions.
-6. Animation Trigger:
-   - User clicks **Run Animation** which executes `runAnimation()`.
-   - Employs Turf.js library calculations: `turf.length(route)` and loops with `requestAnimationFrame(animate)`.
-   - Slides the ambulance pin marker smoothly along precise driving coordinates via `marker.setLngLat(turf.along(route, progress).geometry.coordinates)`.
+```
+┌──────────────┐   1:N   ┌─────────────────────┐   N:1   ┌─────────────────┐
+│   patients   │────────►│   emergency_cases   │────────►│  location_nodes │
+│ patient_id PK│         │ case_id PK           │         │ node_id PK      │
+│ name         │         │ patient_id FK        │         │ name            │
+│ age          │         │ source_location FK   │         │ lat, lng        │
+│ blood_group  │         │ emergency_type       │         │ area            │
+└──────────────┘         │ needs_icu            │         └────────┬────────┘
+                         │ timestamp            │                  │
+                         └──────────┬──────────┘                  │ 1:N
+                                    │ 1:N                          ▼
+                                    ▼                    ┌─────────────────┐
+                            ┌───────────────┐            │   road_edges    │
+                            │  allocations  │            │ edge_id PK      │
+                            │ allocation_id │            │ from_node_id FK │
+                            │ case_id FK    │            │ to_node_id FK   │
+                            │ hospital_id FK│            │ weight_km       │
+                            │ cost_km       │            │ road_name       │
+                            │ path_nodes    │            │ traffic_mult    │
+                            └──────────┬───┘            └─────────────────┘
+                                       │ N:1
+                                       ▼
+┌─────────────────────┐   1:N   ┌────────────┐   1:1   ┌──────────────────────┐
+│hospital_specializ.  │◄────────│  hospitals │────────►│  hospital_resources  │
+│ spec_id PK          │         │ hospital_id│         │ resource_id PK       │
+│ hospital_id FK      │         │ name       │         │ hospital_id FK       │
+│ emergency_type      │         │ address    │         │ icu_beds_total       │
+└─────────────────────┘         │ contact    │         │ icu_beds_available   │
+                                │ node_id FK │         │ general_beds_total   │
+                                └────────────┘         │ general_beds_avail   │
+                                                       └──────────────────────┘
+```
 
-#### Step 4: Step-by-Step Academic Algorithm Visualizer
-1. User navigates to `/visualizer` (`http://localhost:5173/visualizer`) styled in **`AlgorithmVisualizer.jsx`**.
-2. A context synchronization `useEffect` immediately fires:
-   - Detects active global emergency case.
-   - Automatically synchronizes visualizer selects: `setSourceNode(emergencyRequest.sourceNodeId)` and `setTargetNode(emergencyResult.primary.hospital.nodeId)`.
-3. SVG canvas renders adjacency topology:
-   - Selected source is colored Red (`.node-source circle`).
-   - Selected target hospital is colored Vibrant Amber (`.node-target circle`) to differentiate it from other green hospital nodes (`.node-hospital circle`).
-4. Clicking **Play** triggers `togglePlay()` -> calls `handleRun()`.
-5. `handleRun` instantiates the selected pathfinder engine (e.g. `new AStarEngine(graph)`).
-6. Inside **`AStarEngine.js`**:
-   - Enters search loop incorporating straight-line GPS heuristic values: `h(n) = distance(node, target_node)`.
-   - Computes total cost at every node evaluation: `fScore[n] = gScore[n] + h(n)`.
-   - Stores step-by-step snapshots of queue (`pq`), evaluated costs, relaxed edges, and visited states.
-7. **`AlgorithmVisualizer.jsx`** receives `steps` list and plays them using a state timer (`setInterval`).
-8. Steps increment the active index, dynamically updating SVG classes:
-   - Nodes actively explored turn Cyan (`.node-visiting`).
-   - Checked edges pulse with dashed lines (`.edge-exploring`).
-   - Completed relaxation nodes turn Blue (`.node-visited`).
-   - Data structure arrays and cost evaluation tables ($f = g + h$) dynamically re-render step-by-step in the sidebar panel.
+---
+
+## 🔑 Technology Stack
+
+| Technology | Version | Usage |
+|-----------|---------|-------|
+| React | 18.x | UI framework, hooks, context |
+| Vite | 5.x | Build tool, dev server, HMR |
+| Mapbox GL JS | 3.x | Interactive map rendering |
+| Turf.js | 6.x | Geospatial calculations (along, length, bearing) |
+| Framer Motion | 11.x | Page transitions, card animations |
+| Lucide React | latest | Icon library |
+| CSS (Vanilla) | — | Design system: variables, glassmorphism, animations |
+| localStorage | Browser API | Data persistence (theme, history, beds) |
+
+---
+
+## 👩‍💻 Authors
+
+**Shreya R Hipparagi** — VTU 4th Semester CSE  
+GitHub: [ShreyaRHipparagi/Ambulance](https://github.com/ShreyaRHipparagi/Ambulance)
