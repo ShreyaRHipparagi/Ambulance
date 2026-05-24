@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { Play, RefreshCw, Layers, Clock, Zap, AlertTriangle } from 'lucide-react';
+import { Play, RefreshCw, Clock, Zap, AlertTriangle } from 'lucide-react';
 import { useApp } from '../context/AppContext.jsx';
 import { MAPBOX_TOKEN, MAP_CENTER, MAP_ZOOM, ROUTE_COORDS } from '../data/cityData.js';
 import * as turf from '@turf/turf';
@@ -23,7 +23,6 @@ export default function MapView() {
 
   const [isAnimating, setIsAnimating]         = useState(false);
   const [isFetchingRoute, setIsFetchingRoute] = useState(false);
-  const [showTrafficLayer, setShowTrafficLayer] = useState(true);
   const [liveRouteData, setLiveRouteData]     = useState(null); // { distance, duration, congestionSummary }
   const [routeLastUpdated, setRouteLastUpdated] = useState(null);
 
@@ -175,32 +174,7 @@ export default function MapView() {
     map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
     map.on('load', () => {
-      // ── 1. Add Mapbox Live Traffic layer ──────────────────────────────
-      map.addSource('mapbox-traffic', {
-        type: 'vector',
-        url: 'mapbox://mapbox.mapbox-traffic-v1'
-      });
-      map.addLayer({
-        id: 'traffic-layer',
-        type: 'line',
-        source: 'mapbox-traffic',
-        'source-layer': 'traffic',
-        layout: { 'line-join': 'round', 'line-cap': 'round', visibility: 'visible' },
-        paint: {
-          'line-width': ['interpolate', ['linear'], ['zoom'], 10, 1.5, 15, 4],
-          'line-color': [
-            'match', ['get', 'congestion'],
-            'low',      '#10b981',
-            'moderate', '#f59e0b',
-            'heavy',    '#ef4444',
-            'severe',   '#dc2626',
-            '#94a3b8'
-          ],
-          'line-opacity': 0.75
-        }
-      });
-
-      // ── 2. Draw background graph edges ────────────────────────────────
+      // ── 1. Draw background graph edges ────────────────────────────────
       edges.forEach(edge => {
         const coords = ROUTE_COORDS[edge.id] || [];
         if (coords.length > 0) {
@@ -275,14 +249,6 @@ export default function MapView() {
     return () => { map.remove(); if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current); };
   }, [edges, locations, emergencyResult, emergencyRequest, fetchAndDrawRoute]);
 
-  // ─── Toggle traffic layer visibility ──────────────────────────────────
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map || !map.isStyleLoaded()) return;
-    if (map.getLayer('traffic-layer')) {
-      map.setLayoutProperty('traffic-layer', 'visibility', showTrafficLayer ? 'visible' : 'none');
-    }
-  }, [showTrafficLayer]);
 
   // ─── Refresh route with current traffic ───────────────────────────────
   const handleRefreshRoute = () => {
@@ -332,12 +298,14 @@ export default function MapView() {
       const [lng, lat] = point.geometry.coordinates;
       marker.setLngLat([lng, lat]);
 
-      // Rotate ambulance to face direction of travel
+      // Rotate ambulance to face direction of travel.
+      // 🚑 emoji faces RIGHT (east=90°) by default, but Mapbox setRotation(0) = north.
+      // Offset by -90 so the front of the ambulance aligns with the bearing.
       if (progress < 1 && progress > 0.001) {
-        const prevDist   = Math.max(0, distance - 0.02);
-        const prevPoint  = turf.along(route, prevDist, { units: 'kilometers' });
-        const bearing    = turf.bearing(prevPoint, point);
-        marker.setRotation(bearing);
+        const prevDist  = Math.max(0, distance - 0.025);
+        const prevPoint = turf.along(route, prevDist, { units: 'kilometers' });
+        const bearing   = turf.bearing(prevPoint, point);
+        marker.setRotation(bearing - 90);
       }
 
       if (progress < 1) {
@@ -412,35 +380,15 @@ export default function MapView() {
         <div className="relative" style={{ width: '100%', height: '100%', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border-subtle)' }}>
           <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
 
-          {/* Traffic toggle pill */}
-          <div style={{
-            position: 'absolute', bottom: '12px', left: '12px', zIndex: 10,
-            display: 'flex', gap: '6px'
-          }}>
-            <button
-              onClick={() => setShowTrafficLayer(v => !v)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: '5px',
-                background: showTrafficLayer ? 'rgba(16,185,129,0.92)' : 'rgba(30,41,59,0.92)',
-                color: '#fff', border: 'none', borderRadius: '20px',
-                padding: '5px 12px', fontSize: '11px', fontWeight: '700',
-                cursor: 'pointer', backdropFilter: 'blur(8px)',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.25)', transition: 'all 0.2s'
-              }}
-            >
-              <Layers size={12} /> {showTrafficLayer ? '🟢 Traffic ON' : '⚫ Traffic OFF'}
-            </button>
-          </div>
-
-          {/* Traffic legend */}
-          {showTrafficLayer && (
+          {/* Route congestion legend — only shows when a route is active */}
+          {liveRouteData && (
             <div style={{
-              position: 'absolute', bottom: '12px', right: '12px', zIndex: 10,
+              position: 'absolute', bottom: '12px', left: '12px', zIndex: 10,
               background: 'rgba(15,23,42,0.88)', backdropFilter: 'blur(10px)',
               border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px',
               padding: '8px 10px', fontSize: '10px', color: '#fff'
             }}>
-              <div style={{ fontWeight: '700', marginBottom: '5px', opacity: 0.7, letterSpacing: '0.05em' }}>LIVE TRAFFIC</div>
+              <div style={{ fontWeight: '700', marginBottom: '5px', opacity: 0.7, letterSpacing: '0.05em' }}>ROUTE CONGESTION</div>
               {[
                 { c: '#10b981', l: 'Clear' },
                 { c: '#f59e0b', l: 'Moderate' },
