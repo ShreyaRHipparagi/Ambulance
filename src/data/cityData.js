@@ -17,7 +17,7 @@ export const LOCATIONS = [
   { id: 2, name: 'JP Nagar 6th Phase',      area: 'JP Nagar',          lat: 12.9060, lng: 77.5850, isHospital: false },
   { id: 3, name: 'Kumaraswamy Layout (DSI)',area: 'Kumaraswamy Layout',lat: 12.8950, lng: 77.5550, isHospital: false },
   { id: 4, name: 'Sagar Hospitals (DSI)',   area: 'Kumaraswamy Layout',lat: 12.9085, lng: 77.5660, isHospital: true,  hospitalId: 'H2' },
-  { id: 5, name: 'BGS Gleneagles Hospital',  area: 'Kengeri Uttarahalli',lat: 12.8980, lng: 77.4680, isHospital: true,  hospitalId: 'H3' },
+  { id: 5, name: 'BGS Gleneagles Hospital',  area: 'Sunkalpalya',        lat: 12.8985, lng: 77.4984, isHospital: true,  hospitalId: 'H3' },
   { id: 6, name: 'Astra Specialty Hospital',area: 'Banashankari',      lat: 12.9280, lng: 77.5320, isHospital: true,  hospitalId: 'H4' },
   { id: 7, name: 'Padmanabhanagar Circle',  area: 'Padmanabhanagar',   lat: 12.9180, lng: 77.5480, isHospital: false },
   { id: 8, name: 'RRMCH Mysore Road',       area: 'Mysore Road',       lat: 12.8933, lng: 77.4420, isHospital: true,  hospitalId: 'H1' },
@@ -34,7 +34,7 @@ export const LOCATIONS = [
 // ============================================================
 export const EDGES = [
   { id: 'e1',  from: 1, to: 3, weight: 6.2, roadName: 'Uttarahalli-Kumaraswamy Rd',     trafficMultiplier: 1.0 },
-  { id: 'e2',  from: 1, to: 5, weight: 3.8, roadName: 'Dr. Vishnuvardhan Road',          trafficMultiplier: 1.0 },
+  { id: 'e2',  from: 1, to: 5, weight: 1.2, roadName: 'Dr. Vishnuvardhan Road',          trafficMultiplier: 1.0 },
   { id: 'e3',  from: 1, to: 6, weight: 5.8, roadName: 'Kanakapura Main Road',            trafficMultiplier: 1.5 },
   { id: 'e4',  from: 1, to: 8, weight: 7.2, roadName: 'Uttarahalli-RR Nagar Rd',         trafficMultiplier: 1.2 },
   { id: 'e5',  from: 1, to: 9, weight: 3.8, roadName: 'Kengeri-Uttarahalli Main Rd',     trafficMultiplier: 1.0 },
@@ -64,7 +64,7 @@ export const EDGES = [
 // ============================================================
 export const ROUTE_COORDS = {
   'e1':  [[77.5028, 12.9016], [77.5200, 12.9030], [77.5400, 12.9050], [77.5550, 12.8950]],
-  'e2':  [[77.5028, 12.9016], [77.4850, 12.9000], [77.4680, 12.8980]],
+  'e2':  [[77.5028, 12.9016], [77.5000, 12.9000], [77.4984, 12.8985]],
   'e3':  [[77.5028, 12.9016], [77.5150, 12.9100], [77.5300, 12.9200], [77.5320, 12.9280]],
   'e4':  [[77.5028, 12.9016], [77.4850, 12.8980], [77.4650, 12.8950], [77.4420, 12.8933]],
   'e5':  [[77.5028, 12.9016], [77.4950, 12.9050], [77.4850, 12.9100], [77.4780, 12.9135]],
@@ -75,7 +75,7 @@ export const ROUTE_COORDS = {
   'e10': [[77.5480, 12.9180], [77.5650, 12.9100], [77.5850, 12.9060]],
   'e11': [[77.5660, 12.9085], [77.5500, 12.9200], [77.5320, 12.9280]],
   'e13': [[77.4420, 12.8933], [77.4600, 12.9050], [77.4780, 12.9135]],
-  'e14': [[77.4680, 12.8980], [77.4720, 12.9050], [77.4780, 12.9135]],
+  'e14': [[77.4984, 12.8985], [77.4900, 12.9050], [77.4780, 12.9135]],
   'e15': [[77.5730, 12.9150], [77.5550, 12.9220], [77.5320, 12.9280]],
   'e16': [[77.5730, 12.9150], [77.5800, 12.9100], [77.5850, 12.9060]],
   'e17': [[77.5730, 12.9150], [77.5600, 12.9180], [77.5480, 12.9180]],
@@ -126,7 +126,7 @@ export const HOSPITALS = [
     shortName: 'BGS Gleneagles',
     nodeId: 5,
     contact: '080-2625-5555',
-    address: '67, Uttarahalli Road, Kengeri, Bangalore - 560060',
+    address: '67, Uttarahalli Main Road, Sunkalpalya, Bengaluru, Karnataka - 560060',
     specializations: ['CARDIAC', 'GENERAL'],
     icuBedsTotal: 10,
     icuBedsAvailable: 2,
