@@ -1,10 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { History as HistoryIcon, MapPin, ArrowRight } from 'lucide-react';
+import { History as HistoryIcon, MapPin, Trash2 } from 'lucide-react';
 import { useApp } from '../context/AppContext.jsx';
 
 export default function HistoryPage() {
-  const { history, locations } = useApp();
+  const { history, locations, clearHistory } = useApp();
 
   const getLocationName = (id) => {
     const loc = locations.find(l => l.id === id);
@@ -18,8 +18,20 @@ export default function HistoryPage() {
       transition={{ duration: 0.4 }}
     >
       <div className="page-header">
-        <h1 className="page-title">Emergency History</h1>
-        <p className="page-subtitle">Past allocations and routing records</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div>
+            <h1 className="page-title">Emergency History</h1>
+            <p className="page-subtitle">Past allocations and routing records — persisted across sessions</p>
+          </div>
+          {history.length > 0 && (
+            <button
+              onClick={() => { if (window.confirm('Clear all emergency history?')) clearHistory(); }}
+              style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '8px', padding: '6px 12px', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}
+            >
+              <Trash2 size={13} /> Clear History
+            </button>
+          )}
+        </div>
         <div className="subject-badges mt-sm">
           <span className="subject-badge dbms">BCS403 DBMS</span>
         </div>

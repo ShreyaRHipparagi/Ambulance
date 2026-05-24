@@ -24,10 +24,21 @@ export function AppProvider({ children }) {
     return g;
   }, []);
 
-  // Hospital data with mutable bed counts
-  const [hospitals, setHospitals] = useState(() =>
-    HOSPITALS.map(h => ({ ...h }))
-  );
+  // Hospital data with mutable bed counts — persisted to localStorage
+  const [hospitals, setHospitals] = useState(() => {
+    try {
+      const saved = localStorage.getItem('hospital_beds');
+      if (saved) {
+        const savedBeds = JSON.parse(saved);
+        // Merge saved bed counts into static hospital data (preserves name/specializations etc.)
+        return HOSPITALS.map(h => {
+          const s = savedBeds.find(b => b.id === h.id);
+          return s ? { ...h, icuBedsAvailable: s.icuBedsAvailable, generalBedsAvailable: s.generalBedsAvailable } : { ...h };
+        });
+      }
+    } catch (_) {}
+    return HOSPITALS.map(h => ({ ...h }));
+  });
 
   // Recommendation service
   const recommendationService = useMemo(() =>
@@ -59,8 +70,17 @@ export function AppProvider({ children }) {
   // Traffic toggle
   const [trafficEnabled, setTrafficEnabled] = useState(true);
 
-  // History
-  const [history, setHistory] = useState([]);
+  // History — persisted to localStorage so it survives page refresh
+  const [history, setHistory] = useState(() => {
+    try {
+      const saved = localStorage.getItem('emergency_history');
+      return saved ? JSON.parse(saved) : [];
+    } catch (_) { return []; }
+  });
+
+  useEffect(() => {
+    try { localStorage.setItem('emergency_history', JSON.stringify(history)); } catch (_) {}
+  }, [history]);
 
   const addToHistory = useCallback((entry) => {
     setHistory(prev => [{
@@ -70,11 +90,24 @@ export function AppProvider({ children }) {
     }, ...prev]);
   }, []);
 
-  // Update hospital beds
+  const clearHistory = useCallback(() => {
+    setHistory([]);
+    try { localStorage.removeItem('emergency_history'); } catch (_) {}
+  }, []);
+
+  // Update hospital beds — also persist to localStorage
   const updateBeds = useCallback((hospitalId, field, value) => {
-    setHospitals(prev => prev.map(h =>
-      h.id === hospitalId ? { ...h, [field]: Math.max(0, value) } : h
-    ));
+    setHospitals(prev => {
+      const updated = prev.map(h =>
+        h.id === hospitalId ? { ...h, [field]: Math.max(0, value) } : h
+      );
+      try {
+        localStorage.setItem('hospital_beds', JSON.stringify(
+          updated.map(h => ({ id: h.id, icuBedsAvailable: h.icuBedsAvailable, generalBedsAvailable: h.generalBedsAvailable }))
+        ));
+      } catch (_) {}
+      return updated;
+    });
   }, []);
 
   // Run recommendation
@@ -88,7 +121,7 @@ export function AppProvider({ children }) {
         patientName: request.patientName || 'Patient',
         emergencyType: request.emergencyType,
         sourceNodeId: request.sourceNodeId,
-        needsIcu: request.needsIcu,
+        needsIcu: request.needsIcu,       // Bug 5 fix: was missing
         primaryHospital: result.primary.hospital.name,
         backupHospital: result.backup?.hospital?.name || 'None',
         routeCost: result.primary.cost,
@@ -128,6 +161,7 @@ export function AppProvider({ children }) {
     runRecommendation,
     updateBeds,
     addToHistory,
+    clearHistory,
     recommendationService,
   };
 

@@ -82,7 +82,8 @@ export default function Results() {
                 <div className="text-xs text-muted mb-xs">Estimated Time</div>
                 <div className="text-xl font-bold font-mono text-accent-cyan flex items-center gap-sm">
                   <Clock size={20} />
-                  {Math.round((primary.cost / 40) * 60)} min
+                  {/* ETA: emergency vehicles average 50 km/h in Bangalore with priority */}
+                  {Math.round((primary.cost / 50) * 60)} min
                 </div>
               </div>
               <div>

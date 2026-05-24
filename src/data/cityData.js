@@ -9,7 +9,7 @@ export const MAP_CENTER = { lat: 12.9080, lng: 77.5250 };
 export const MAP_ZOOM = 12.5;
 
 // ============================================================
-// Location Nodes (9 nodes near JSSATE College, Bangalore)
+// Location Nodes (13 nodes near JSSATE College, Bangalore)
 // Spaced out properly to prevent map overcrowding
 // ============================================================
 export const LOCATIONS = [
@@ -75,7 +75,7 @@ export const ROUTE_COORDS = {
   'e10': [[77.5480, 12.9180], [77.5650, 12.9100], [77.5815, 12.9060]],
   'e11': [[77.5660, 12.9085], [77.5630, 12.9000], [77.5615, 12.8945]],
   'e13': [[77.4619, 12.8963], [77.4700, 12.9050], [77.4810, 12.9115]],
-  'e14': [[77.4984, 12.8985], [77.4900, 12.9050], [77.4780, 12.9135]],
+  'e14': [[77.4984, 12.8985], [77.4900, 12.9050], [77.4810, 12.9115]],
   'e15': [[77.5730, 12.9150], [77.5680, 12.9050], [77.5615, 12.8945]],
   'e16': [[77.5730, 12.9150], [77.5800, 12.9100], [77.5815, 12.9060]],
   'e17': [[77.5730, 12.9150], [77.5600, 12.9180], [77.5480, 12.9180]],
@@ -99,7 +99,7 @@ export const HOSPITALS = [
     nodeId: 8,
     contact: '080-2843-7400',
     address: 'Mysore Road, near Kengeri, Bangalore - 560074',
-    specializations: ['GENERAL', 'TRAUMA'],
+    specializations: ['GENERAL', 'TRAUMA', 'MATERNITY'],
     icuBedsTotal: 5,
     icuBedsAvailable: 1,
     generalBedsTotal: 12,
@@ -127,7 +127,7 @@ export const HOSPITALS = [
     nodeId: 5,
     contact: '080-2625-5555',
     address: '67, Uttarahalli Main Road, Sunkalpalya, Bengaluru, Karnataka - 560060',
-    specializations: ['CARDIAC', 'GENERAL'],
+    specializations: ['CARDIAC', 'GENERAL', 'MATERNITY'],
     icuBedsTotal: 10,
     icuBedsAvailable: 2,
     generalBedsTotal: 20,

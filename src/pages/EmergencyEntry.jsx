@@ -12,7 +12,7 @@ export default function EmergencyEntry() {
     age: '',
     contact: '',
     bloodGroup: 'A+',
-    sourceLocationId: locations[0].id,
+    sourceLocationId: locations[0].id,   // already a number from data
     emergencyType: 'CARDIAC',
     needsIcu: true
   });
@@ -110,7 +110,7 @@ export default function EmergencyEntry() {
           <select 
             className="form-select"
             value={formData.sourceLocationId}
-            onChange={e => setFormData({...formData, sourceLocationId: e.target.value})}
+            onChange={e => setFormData({...formData, sourceLocationId: parseInt(e.target.value)})}
           >
             {locations.map(loc => (
               <option key={loc.id} value={loc.id}>{loc.name} ({loc.area})</option>
