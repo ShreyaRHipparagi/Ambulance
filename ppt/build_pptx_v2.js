@@ -706,62 +706,166 @@ async function build() {
   }
 
   // ===========================================================
-  // SLIDE 9 — 3 DEMO CASES
+  // SLIDE 8 — HOW ALL 4 SUBJECTS CONNECT  [CLASS PROJECT STYLE]
   // ===========================================================
-  // Layout: light background with dark header band.
-  // Three full-width rows, each numbered 01 / 02 / 03.
-  // Left side: large coloured number box.
-  // Centre: case title, italic scenario line, result text.
-  // Right side: coloured pill with the key teaching point.
+  // Exact match to class project PPT slide 7 layout:
+  //   bg=#0B1D3A, header rect #112B52 full-width h=1.1
+  //   4 columns x=0.3/2.72/5.14/7.56  w=2.2  y=1.25  h=3.9
+  //   each: MID_BG card, colored top h=0.6, code bold 13pt,
+  //   name 10pt, icon at x+0.75 y=2.0, role text at x+0.12 y=2.8
+  //   vertical connector lines between cols (line shape)
+  //   bottom bar #193050 y=5.15 h=0.3 with teal centered text
   // ===========================================================
   {
     const s = pres.addSlide();
+    s.background = { color: DARK_BG };
+
+    // Header band — exact match class project slide 7
+    s.addShape("rect", { x:0, y:0, w:10, h:1.1, fill:{ color:MID_BG } });
+    s.addText("How All 4 Subjects Work Together", {
+      x:0.4, y:0.1, w:9.2, h:0.9,
+      fontSize:24, bold:true, color:WHITE,
+      fontFace:"Calibri", valign:"middle", margin:0
+    });
+
+    // 4 subject columns — exact positions from class project PPT
+    const cols = [
+      { x:0.30, code:"BCS401", name:"Algorithm Design", color:SUBJ.BCS401,
+        icon:"📊",
+        role:"Defines the PROBLEM and justifies WHY Dijkstra is used over brute-force" },
+      { x:2.72, code:"BCS403", name:"DBMS",             color:SUBJ.BCS403,
+        icon:"🗄",
+        role:"Stores hospital data, roads, patients, and allocation history in a normalized schema" },
+      { x:5.14, code:"BCS405B", name:"Graph Theory",    color:SUBJ.BCS405B,
+        icon:"🕸",
+        role:"Models roads as a weighted graph. Runs BFS/DFS/Dijkstra to find the best route" },
+      { x:7.56, code:"BCS402", name:"Advanced Java",    color:SUBJ.BCS402,
+        icon:"💻",
+        role:"Builds the full application — OOP classes, Swing UI, Collections, JDBC connector" },
+    ];
+
+    cols.forEach((col, i) => {
+      // Card body — #112B52, w=2.2, h=3.9, y=1.25
+      s.addShape("rect", { x:col.x, y:1.25, w:2.2, h:3.9, fill:{ color:MID_BG } });
+      // Colored top bar — h=0.6
+      s.addShape("rect", { x:col.x, y:1.25, w:2.2, h:0.6, fill:{ color:col.color } });
+      // Subject code — 13pt bold white centered
+      s.addText(col.code, {
+        x:col.x, y:1.27, w:2.2, h:0.3,
+        fontSize:13, bold:true, color:WHITE,
+        fontFace:"Calibri", align:"center", margin:0
+      });
+      // Subject name — 10pt white centered
+      s.addText(col.name, {
+        x:col.x, y:1.55, w:2.2, h:0.28,
+        fontSize:10, color:WHITE,
+        fontFace:"Calibri", align:"center", margin:0
+      });
+      // Icon — centered in card, y=2.05 (matches class project image position)
+      s.addText(col.icon, {
+        x:col.x+0.75, y:2.05, w:0.65, h:0.65,
+        fontSize:28, fontFace:"Segoe UI Emoji", align:"center", margin:0
+      });
+      // Role description text — 10.5pt #E0F0FF centered, y=2.8
+      s.addText(col.role, {
+        x:col.x+0.12, y:2.85, w:1.96, h:2.2,
+        fontSize:10.5, color:LIGHT_TXT,
+        fontFace:"Calibri", align:"center", margin:0
+      });
+
+      // Vertical connector line between columns (class project uses line shapes)
+      // The class project has lines at x=2.5/4.92/7.34 y=3.2 w=0.22 h=0 (horizontal dividers)
+      if (i < 3) {
+        const lx = col.x + 2.2;
+        s.addShape("line", {
+          x: lx, y:3.2, w:0.22, h:0,
+          line:{ color:TEAL, width:2 }
+        });
+      }
+    });
+
+    // Bottom summary bar — exact match: #193050 y=5.15 h=0.3 w=9.4 x=0.3
+    s.addShape("rect", { x:0.3, y:5.15, w:9.4, h:0.3, fill:{ color:"193050" } });
+    s.addText(
+      "Algorithm Design defines the WHY  ·  Graph Theory does the routing  ·  DBMS stores everything  ·  Advanced Java builds it all",
+      { x:0.3, y:5.15, w:9.4, h:0.3, fontSize:10, color:TEAL,
+        fontFace:"Calibri", align:"center", valign:"middle", margin:0, bold:true }
+    );
+  }
+
+  // ===========================================================
+  // SLIDE 9 — 3 DEMO CASES  [CLASS PROJECT STYLE]
+  // ===========================================================
+  // Matches class project light-bg slides (F8FAFF) with dark header.
+  // Three full-width case rows — white cards with colored left bar,
+  // same card format as slides 2/4 of class project.
+  // Each row: colored left stripe 0.72" wide, title 13.5pt bold,
+  // italic scenario 9.5pt, result 10pt, right lesson pill.
+  // ===========================================================
+  {
+    const s = pres.addSlide();
+    // Light bg — matches class project slide 2/4 style
     s.background = { color:"F8FAFF" };
+
+    // Header band — dark navy, same as class project
     s.addShape("rect", { x:0, y:0, w:10, h:1.1, fill:{ color:DARK_BG } });
+    // Left teal stripe — present in every class project slide
+    s.addShape("rect", { x:0, y:0, w:0.18, h:5.625, fill:{ color:TEAL } });
     s.addText("3 Demo Cases to Explain During Presentation", {
       x:0.4, y:0.1, w:9.2, h:0.9,
-      fontSize:24, bold:true, color:WHITE, fontFace:"Calibri", valign:"middle", margin:0
+      fontSize:24, bold:true, color:WHITE,
+      fontFace:"Calibri", valign:"middle", margin:0
     });
 
     [
       { num:"01", color:SUBJ.BCS402,
-        title:"Nearest Hospital is Best",
-        scenario:"Patient at Node 1 (JSSATE)  |  Emergency: GENERAL  |  No ICU",
-        result:"BGS Gleneagles (Node 5, 1.2 km) handles GENERAL, has beds, and is the shortest Dijkstra path. System recommends it.",
-        lesson:"Shows the system works correctly in the simple case." },
+        title:"Nearest Hospital is Best — Simple Case",
+        scenario:"Patient at Node 1 (JSSATE)  |  Emergency: GENERAL  |  No ICU needed",
+        result:"BGS Gleneagles (Node 5, 1.2 km) handles GENERAL, has beds, and is the shortest Dijkstra path. System correctly recommends it as PRIMARY.",
+        lesson:"System works in the simple case — nearest IS best here." },
       { num:"02", color:SUBJ.BCS401,
-        title:"Nearest Hospital Lacks ICU",
+        title:"Nearest Hospital Lacks Specialization — Filtered Out",
         scenario:"Patient at Node 1 (JSSATE)  |  Emergency: TRAUMA  |  Needs ICU",
-        result:"BGS (1.2 km) has CARDIAC not TRAUMA — filtered out. Sagar Hospital (Node 4, 7.7 km) handles TRAUMA and has ICU — selected.",
-        lesson:"Shows why nearest ≠ best. Resource + type check matters." },
+        result:"BGS (1.2 km) handles CARDIAC not TRAUMA — filtered at Stage 1. RRMCH (Node 8, 7.2 km) handles TRAUMA with ICU available — selected as PRIMARY.",
+        lesson:"Nearest ≠ Best. Type + ICU filter is the key differentiator." },
       { num:"03", color:SUBJ.BCS405B,
-        title:"Multiple Valid Hospitals — Dijkstra Decides",
-        scenario:"Patient at Node 10 (BSK)  |  Emergency: CARDIAC  |  Needs ICU",
-        result:"BGS (Node 5), Apollo (Node 11), and Fortis (Node 13) all handle CARDIAC with ICU. Dijkstra computes: BGS=9.2km, Apollo=5.5km, Fortis=5.8km. Apollo wins.",
-        lesson:"Shows Dijkstra's role clearly. Best use case for viva." },
+        title:"Multiple Valid Hospitals — Dijkstra Decides the Winner",
+        scenario:"Patient at Node 10 (BSK Temple)  |  Emergency: CARDIAC  |  Needs ICU",
+        result:"BGS, Apollo & Fortis all handle CARDIAC with ICU. Dijkstra computes road distances — Apollo (Node 11) wins at ~5.5 km vs BGS at 9+ km.",
+        lesson:"Best viva case — Dijkstra's role is crystal clear here." },
     ].forEach((demo, i) => {
-      const y = 1.25 + i*1.38;
-      s.addShape("rect",  { x:0.35, y, w:9.3, h:1.22, fill:{ color:CARD_BG }, shadow:sh() });
-      s.addShape("rect",  { x:0.35, y, w:0.72, h:1.22, fill:{ color:demo.color } });
+      const y = 1.25 + i * 1.38;
+      // White card — matches class project row cards
+      s.addShape("rect", { x:0.35, y, w:9.3, h:1.22, fill:{ color:CARD_BG }, shadow:sh() });
+      // Colored left stripe — same pattern as class project left borders
+      s.addShape("rect", { x:0.35, y, w:0.72, h:1.22, fill:{ color:demo.color } });
+      // Number — 28pt bold white centered
       s.addText(demo.num, { x:0.35, y, w:0.72, h:1.22,
         fontSize:28, bold:true, color:WHITE, fontFace:"Calibri",
         align:"center", valign:"middle", margin:0
       });
+      // Title — 13.5pt bold body text
       s.addText(demo.title, {
-        x:1.18, y:y+0.08, w:7.88, h:0.3,
-        fontSize:13.5, bold:true, color:BODY_TXT, fontFace:"Calibri", margin:0
+        x:1.18, y:y+0.07, w:7.88, h:0.3,
+        fontSize:13, bold:true, color:BODY_TXT, fontFace:"Calibri", margin:0
       });
+      // Scenario — 9.5pt italic muted (class project uses italic for secondary info)
       s.addText("Scenario: " + demo.scenario, {
-        x:1.18, y:y+0.38, w:7.88, h:0.22,
+        x:1.18, y:y+0.37, w:7.88, h:0.22,
         fontSize:9.5, color:MUTED, fontFace:"Calibri", italic:true, margin:0
       });
+      // Result text
       s.addText("Result: " + demo.result, {
-        x:1.18, y:y+0.6, w:5.9, h:0.55,
+        x:1.18, y:y+0.59, w:5.85, h:0.55,
         fontSize:10, color:BODY_TXT, fontFace:"Calibri", margin:0
       });
-      s.addShape("roundRect", { x:7.35, y:y+0.58, w:2.12, h:0.48, fill:{ color:demo.color }, rectRadius:0.05 });
+      // Lesson pill — roundRect same as class project badge pills
+      s.addShape("roundRect", {
+        x:7.18, y:y+0.55, w:2.32, h:0.52,
+        fill:{ color:demo.color }, rectRadius:0.05
+      });
       s.addText(demo.lesson, {
-        x:7.35, y:y+0.58, w:2.12, h:0.48,
+        x:7.18, y:y+0.55, w:2.32, h:0.52,
         fontSize:8.5, color:WHITE, fontFace:"Calibri",
         align:"center", valign:"middle", margin:3
       });
@@ -769,61 +873,82 @@ async function build() {
   }
 
   // ===========================================================
-  // SLIDE 10 — VIVA CLOSING
+  // SLIDE 10 — VIVA CLOSING  [CLASS PROJECT STYLE]
   // ===========================================================
-  // Layout: dark navy background, decorative teal circle top-right.
-  // Title in teal: "One Line to Remember for Viva"
-  // Large quote box (dark card with teal left border).
-  // Below: 4 coloured chips, one per subject, with 2-word role.
-  // Footer: project full name, italic.
+  // Exact match to class project PPT slide 8 (What did we learn?):
+  //   bg=#0B1D3A
+  //   Decorative circle top-right: x=6.5 y=-1 w=5 h=5 #112B52 + teal border
+  //   Title: teal #00B4D8 x=0.5 y=0.5
+  //   Quote card: #112B52 x=0.5 y=1.2 w=8.2 h=1.5
+  //   Left border: #00B4D8 x=0.5 y=1.2 w=0.1 h=1.5
+  //   Quote text: 14pt italic #E0F0FF x=0.7 y=1.3
+  //   4 chips: x=0.5/2.8/5.1/7.4 y=3.1 w=2.1 h=0.7
+  //     code bold 12pt x y=3.12 h=0.3, sub 10pt y=3.42 h=0.28
+  //   Footer: 11pt italic #64748B x=0.5 y=4.9
   // ===========================================================
   {
     const s = pres.addSlide();
     s.background = { color: DARK_BG };
 
-    // Decorative background circle
-    s.addShape("oval", { x:6.5, y:-1, w:5, h:5, fill:{ color:MID_BG }, line:{ color:TEAL, width:1.5 } });
+    // Decorative circle top-right — exact class project position
+    s.addShape("oval", {
+      x:6.5, y:-1, w:5, h:5,
+      fill:{ color:MID_BG }, line:{ color:TEAL, width:1.5 }
+    });
 
+    // Title — class project uses teal, no background, x=0.5 y=0.5
     s.addText("One Line to Remember for Viva", {
       x:0.5, y:0.5, w:8, h:0.6,
       fontSize:18, color:TEAL, fontFace:"Calibri", bold:true, margin:0
     });
 
-    // Quote card
-    s.addShape("rect", { x:0.5, y:1.2, w:8.2, h:1.5, fill:{ color:MID_BG }, shadow:sh() });
+    // Quote card — exact class project shape: #112B52, x=0.5 y=1.2 w=8.2 h=1.5
+    s.addShape("rect", { x:0.5, y:1.2, w:8.2, h:1.5, fill:{ color:MID_BG } });
+    // Left teal accent border — exactly w=0.1 (class project uses 0.1" left bar)
     s.addShape("rect", { x:0.5, y:1.2, w:0.1, h:1.5, fill:{ color:TEAL } });
+    // Quote text — 14pt italic #E0F0FF (class project uses 14pt for quote)
     s.addText(
       '"This project uses DBMS to store hospitals and roads, ' +
       'Advanced Java to build the application, Graph Theory to model ' +
       'and solve routing, and Algorithm Design to compare and justify ' +
       'the recommendation strategy."',
       { x:0.7, y:1.3, w:7.9, h:1.35,
-        fontSize:13.5, color:LIGHT_TXT, fontFace:"Calibri", italic:true, margin:0 }
+        fontSize:14, color:LIGHT_TXT, fontFace:"Calibri", italic:true, margin:0 }
     );
 
-    // 4 summary chips
+    // 4 subject chips — exact class project positions
+    // x = 0.5, 2.8, 5.1, 7.4   y=3.1  w=2.1  h=0.7
     [
-      {label:"BCS401",  sub:"Defined the Problem", c:SUBJ.BCS401},
-      {label:"BCS402",  sub:"Built the App",       c:SUBJ.BCS402},
-      {label:"BCS403",  sub:"Designed the DB",     c:SUBJ.BCS403},
-      {label:"BCS405B", sub:"Solved the Routing",  c:SUBJ.BCS405B},
-    ].forEach((chip, i) => {
-      s.addShape("rect", { x:0.5+i*2.3, y:3.1, w:2.1, h:0.7, fill:{ color:chip.c }, shadow:sh() });
+      { label:"BCS401",  sub:"Defined the Problem", c:SUBJ.BCS401, x:0.5 },
+      { label:"BCS402",  sub:"Built the App",       c:SUBJ.BCS402, x:2.8 },
+      { label:"BCS403",  sub:"Designed the DB",     c:SUBJ.BCS403, x:5.1 },
+      { label:"BCS405B", sub:"Solved the Routing",  c:SUBJ.BCS405B, x:7.4 },
+    ].forEach((chip) => {
+      // Chip background — exact w=2.1 h=0.7 (class project)
+      s.addShape("rect", { x:chip.x, y:3.1, w:2.1, h:0.7, fill:{ color:chip.c } });
+      // Subject code — 12pt bold (class project)
       s.addText(chip.label, {
-        x:0.5+i*2.3, y:3.12, w:2.1, h:0.3,
-        fontSize:12, bold:true, color:WHITE, fontFace:"Calibri", align:"center", margin:0
+        x:chip.x, y:3.12, w:2.1, h:0.3,
+        fontSize:12, bold:true, color:WHITE,
+        fontFace:"Calibri", align:"center", margin:0
       });
+      // Subject sub-label — 10pt (class project)
       s.addText(chip.sub, {
-        x:0.5+i*2.3, y:3.42, w:2.1, h:0.28,
-        fontSize:10, color:WHITE, fontFace:"Calibri", align:"center", margin:0
+        x:chip.x, y:3.42, w:2.1, h:0.28,
+        fontSize:10, color:WHITE,
+        fontFace:"Calibri", align:"center", margin:0
       });
     });
 
+    // Footer — exact class project: 11pt italic #64748B x=0.5 y=4.9 left-aligned
     s.addText("Smart Ambulance Routing & Hospital Allocation System  ·  South Bangalore City Map  ·  13 Nodes  ·  6 Hospitals", {
       x:0.5, y:4.9, w:9, h:0.4,
-      fontSize:10, color:MUTED, fontFace:"Calibri", align:"left", italic:true, margin:0
+      fontSize:11, color:MUTED, fontFace:"Calibri", align:"left", italic:true, margin:0
     });
   }
+
+
+
 
   // ── Save ─────────────────────────────────────────────────
   const outPath = "/Users/abhi/Desktop/insta/AMBULANCE/ppt/Smart_Ambulance_v2.pptx";
