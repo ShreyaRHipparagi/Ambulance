@@ -24,21 +24,20 @@ export function AppProvider({ children }) {
     return g;
   }, []);
 
-  // Hospital data with mutable bed counts — persisted to localStorage
-  const [hospitals, setHospitals] = useState(() => {
-    try {
-      const saved = localStorage.getItem('hospital_beds');
-      if (saved) {
-        const savedBeds = JSON.parse(saved);
-        // Merge saved bed counts into static hospital data (preserves name/specializations etc.)
-        return HOSPITALS.map(h => {
-          const s = savedBeds.find(b => b.id === h.id);
-          return s ? { ...h, icuBedsAvailable: s.icuBedsAvailable, generalBedsAvailable: s.generalBedsAvailable } : { ...h };
-        });
-      }
-    } catch (_) {}
-    return HOSPITALS.map(h => ({ ...h }));
-  });
+  // Hospital data with mutable bed counts — fetched from SQLite backend
+  const [hospitals, setHospitals] = useState(HOSPITALS.map(h => ({ ...h })));
+
+  useEffect(() => {
+    fetch('http://localhost:3001/api/hospitals')
+      .then(res => res.json())
+      .then(data => {
+        setHospitals(HOSPITALS.map(h => {
+          const dbData = data.find(d => d.id === h.id);
+          return dbData ? { ...h, icuBedsAvailable: dbData.icuBedsAvailable, generalBedsAvailable: dbData.generalBedsAvailable } : { ...h };
+        }));
+      })
+      .catch(err => console.error("Failed to fetch hospitals from DB", err));
+  }, []);
 
   // Recommendation service
   const recommendationService = useMemo(() =>
@@ -70,42 +69,62 @@ export function AppProvider({ children }) {
   // Traffic toggle
   const [trafficEnabled, setTrafficEnabled] = useState(true);
 
-  // History — persisted to localStorage so it survives page refresh
-  const [history, setHistory] = useState(() => {
-    try {
-      const saved = localStorage.getItem('emergency_history');
-      return saved ? JSON.parse(saved) : [];
-    } catch (_) { return []; }
-  });
+  // History — fetched from SQLite backend
+  const [history, setHistory] = useState([]);
 
   useEffect(() => {
-    try { localStorage.setItem('emergency_history', JSON.stringify(history)); } catch (_) {}
-  }, [history]);
+    fetch('http://localhost:3001/api/history')
+      .then(res => res.json())
+      .then(data => setHistory(data))
+      .catch(err => console.error("Failed to fetch history from DB", err));
+  }, []);
+
+
 
   const addToHistory = useCallback((entry) => {
-    setHistory(prev => [{
+    const newEntry = {
       ...entry,
-      id: Date.now(),
       timestamp: new Date().toISOString(),
-    }, ...prev]);
+    };
+    
+    // Save to SQLite DB
+    fetch('http://localhost:3001/api/history', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newEntry)
+    })
+    .then(res => res.json())
+    .then(data => {
+      setHistory(prev => [{ ...newEntry, id: data.id }, ...prev]);
+    })
+    .catch(err => console.error("Failed to save history to DB", err));
   }, []);
 
   const clearHistory = useCallback(() => {
-    setHistory([]);
-    try { localStorage.removeItem('emergency_history'); } catch (_) {}
+    fetch('http://localhost:3001/api/history', { method: 'DELETE' })
+      .then(() => setHistory([]))
+      .catch(err => console.error("Failed to clear history in DB", err));
   }, []);
 
-  // Update hospital beds — also persist to localStorage
+  // Update hospital beds — persist to SQLite database
   const updateBeds = useCallback((hospitalId, field, value) => {
     setHospitals(prev => {
       const updated = prev.map(h =>
         h.id === hospitalId ? { ...h, [field]: Math.max(0, value) } : h
       );
-      try {
-        localStorage.setItem('hospital_beds', JSON.stringify(
-          updated.map(h => ({ id: h.id, icuBedsAvailable: h.icuBedsAvailable, generalBedsAvailable: h.generalBedsAvailable }))
-        ));
-      } catch (_) {}
+      
+      const targetHospital = updated.find(h => h.id === hospitalId);
+      if (targetHospital) {
+        fetch(`http://localhost:3001/api/hospitals/${hospitalId}/beds`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            icuBedsAvailable: targetHospital.icuBedsAvailable,
+            generalBedsAvailable: targetHospital.generalBedsAvailable
+          })
+        }).catch(err => console.error("Failed to update beds in DB", err));
+      }
+      
       return updated;
     });
   }, []);
